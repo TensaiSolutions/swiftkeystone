@@ -1,7 +1,8 @@
 # SwiftKeystone validation
 
 Validated locally on 2026-10-22 with Xcode 26.6 (17F113), Swift compiler 6.3.3,
-Python 3.12.3, and macOS 26.6.2 on Apple silicon. Nothing has been published to GitHub or the App Store.
+Python 3.12.3, and macOS 26.6.2 on Apple silicon. The toolkit v0.1.0 is published on GitHub;
+app pilots are local validation work and have not been submitted to the App Store.
 
 ## New app: Forge Notes
 
@@ -108,3 +109,30 @@ passed the real build-only check. All 21 current portable tests pass. The v0.1.0
 
 This same-agent clean-artifact check is not independent user research, automatic skill-discovery UI
 validation, or behavioral coverage of the app. Private evidence remains outside this repository.
+
+## Native macOS pilot (unreleased)
+
+A pinned CotEditor 7.0.6 checkout exercised a native macOS destination on the current Apple silicon
+Mac. The original macOS 15 target, Swift settings, Xcode project, dependency lock, and production app
+source were preserved. Upstream's documented ad-hoc signing configuration was selected locally;
+test bundles also needed a scoped correction for a nonexistent entitlement file. This is local build
+coverage, not distribution-signing or notarization evidence.
+
+The initial build correctly stopped at a pinned SwiftLint plugin trust gate. The user explicitly
+approved that plugin/version in Xcode; validation was not disabled. The native app then built, and
+111 existing app tests passed with corrected local test setup. The separate XCTest UI runner failed
+while enabling automation mode, before any app journey executed. That remains an infrastructure gap.
+
+A desktop UI tool separately demonstrated opening, editing, saving exact file bytes, quitting, and
+relaunching the app with the saved content visible. A pilot document serialization round-trip case
+brought the native app suite to 112 passes. A temporary extra byte in the production serializer made
+the helper CLI fail with 111 passes and one failure; its diagnostic identified the 64-versus-63-byte
+mismatch. Restoring the source and profile returned all 112 tests to passing. The before/after green
+source fingerprints match, and no production mutation remains.
+
+App test runs used both the helper CLI and explicit native Xcode commands with reused build output;
+private evidence records which method was used. Separate local-package test suites were not all run.
+Unreleased toolkit fixes add macOS workflow scope, bundled guidance and a profile example, and a
+fallback diagnostic from Xcode's failed-build-step summary. All 23 portable tests pass. No result here
+establishes successful XCTest UI automation, other hardware/OS versions, manual VoiceOver, or release
+signing/submission. The published v0.1.0 archive remains unchanged.

@@ -1,0 +1,13 @@
+{
+  "schema_version": 1,
+  "name": "MacNotes",
+  "project": "MacNotes.xcodeproj",
+  "scheme": "MacNotes",
+  "destination": "platform=macOS",
+  "checks": [
+    "build",
+    "test"
+  ],
+  "timeout_seconds": 900,
+  "architecture": "Preserve the existing document and window architecture."
+}

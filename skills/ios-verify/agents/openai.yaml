@@ -1,4 +1,4 @@
 interface:
   display_name: "SwiftKeystone: Verify"
   short_description: "Verify builds, tests, and relevant app journeys."
-  default_prompt: "Use $ios-verify to verify this iOS change and report evidence."
+  default_prompt: "Use $ios-verify to verify this app change and report evidence."

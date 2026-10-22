@@ -23,10 +23,11 @@ def main():
         metadata = (directory / "agents" / "openai.yaml").read_text()
         if f"${name}" not in metadata:
             errors.append(f"{name}: metadata prompt must name its skill")
-    for skill, document in (("ios-onboard", "profile"), ("ios-onboard", "new-project"), ("ios-verify", "profile"), ("ios-verify", "verification")):
+    for skill, document in (("ios-onboard", "profile"), ("ios-onboard", "new-project"), ("ios-verify", "profile"), ("ios-verify", "verification"), ("ios-onboard", "macos"), ("ios-verify", "macos")):
         if (ROOT / "docs" / f"{document}.md").read_bytes() != (ROOT / "skills" / skill / "references" / f"{document}.md").read_bytes():
             errors.append(f"{skill}: {document} reference differs from canonical docs")
-    forge.load_profile(ROOT / "examples" / "app-profile.json")
+    for example in ("app-profile.json", "macos-app-profile.json"):
+        forge.load_profile(ROOT / "examples" / example)
     json.loads((ROOT / "schemas" / "app-profile.schema.json").read_text())
     registry = json.loads((ROOT / "upstream" / "registry.json").read_text())
     if any(c["status"] != "candidate" or c["revision"] is not None for c in registry["candidates"]):
