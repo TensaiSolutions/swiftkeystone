@@ -142,6 +142,18 @@ class ForgeTests(unittest.TestCase):
         self.assertTrue(report["not_verified"])
         self.assertEqual(stat.S_IMODE(next(self.output.iterdir()).stat().st_mode), 0o700)
 
+    def test_build_only_pass_explicitly_reports_missing_test_coverage(self):
+        self.data["checks"] = ["build"]
+        self.save()
+        with self.fake_xcode("print('Build succeeded')"), patch("forge.platform.system", return_value="Darwin"), patch("forge.read_test_summary") as summary:
+            code, output, error = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
+        self.assertEqual(code, 0, error)
+        self.assertIn("automated tests were not configured or run", output)
+        report = self.report()
+        self.assertEqual([check["name"] for check in report["checks"]], ["build"])
+        self.assertIn("Automated tests (not configured)", report["not_verified"])
+        summary.assert_not_called()
+
     def test_failure_stops_later_checks(self):
         with self.fake_xcode("print('compiler error'); sys.exit(65)"), patch("forge.platform.system", return_value="Darwin"):
             code, _, _ = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))

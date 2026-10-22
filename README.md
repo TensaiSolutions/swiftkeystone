@@ -20,7 +20,19 @@ Release archives are named `swiftkeystone-0.1.0.zip`, containing a `swiftkeyston
 
 ## Start here
 
-Download a release archive or clone this repository and keep it in a stable location.
+Download `swiftkeystone-0.1.0.zip` and `swiftkeystone-0.1.0.zip.sha256` from the
+[v0.1.0 release](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.1.0).
+Use those named assets, rather than GitHub's automatically generated source archives, for these steps.
+In the download directory on macOS, verify and extract:
+
+```sh
+shasum -a 256 -c swiftkeystone-0.1.0.zip.sha256
+unzip swiftkeystone-0.1.0.zip
+cd swiftkeystone-0.1.0
+```
+
+Stop if the checksum does not match. Keep the extracted directory in a stable location.
+Cloning this repository is an alternative; it gives you the current branch rather than necessarily v0.1.0.
 Commands below run from that SwiftKeystone directory. Python 3.10+ is required.
 Actual app builds need macOS, full Xcode, and a compatible installed simulator runtime.
 Xcode 16 or newer is required to read test-result summaries.
@@ -39,9 +51,15 @@ Do not install skills into repositories you do not trust without reading them.
 
 Open your app in Codex and ask:
 
-> Use $ios-onboard to discover this app's configuration and establish a verification baseline.
+> Use $ios-onboard to discover this app's configuration and establish a verification baseline. The SwiftKeystone helper is at /absolute/path/to/swiftkeystone-0.1.0/forge.py.
 
-The onboarding skill discovers the real project/workspace, shared scheme, and available destination.
+Replace that helper path with the location you extracted. Installation copies skills, not the Python
+helper, into the app. If a skill is not discovered, reopen the app's Codex chat and confirm its
+`.agents/skills/ios-onboard/SKILL.md` exists; you can also ask Codex to read that file explicitly.
+
+The onboarding skill discovers the real project/workspace, scheme, and available destination.
+For reproducible team/CI use, share the intended scheme in Xcode and commit its scheme file;
+locally generated schemes can work without being portable to another checkout.
 You can also create the configuration yourself after inspecting those values:
 
 ```sh
@@ -55,6 +73,17 @@ python3 forge.py doctor --app "/path/to/MyApp"
 Replace the sample values; SwiftKeystone does not choose an arbitrary simulator or scheme.
 `doctor` discovers executable prerequisites and a valid profile; it does not certify Xcode health.
 See the [profile contract](docs/profile.md) and [example profile](examples/app-profile.json).
+
+### Apps without tests
+
+`init` starts with `"checks": ["build", "test"]`. Inspect the scheme's test action before running it.
+If the app has no test target, record that coverage gap. For an explicitly build-only baseline, edit
+`.ios-forge/app.json` to use `"checks": ["build"]`, validate it, and then run verification.
+A passing build-only baseline proves compilation, not tested behavior. Do not remove existing tests
+from a profile to hide failures. Add or restore tests as a separate, scoped task.
+
+The profile contains a machine-specific destination. Review your app's ignore policy before committing
+it; the installer does not edit `.gitignore`. Installed skills may be committed for the team or kept local.
 
 ## Everyday workflow
 
@@ -114,8 +143,7 @@ python3 scripts/package_release.py
 
 Tests use temporary projects and a fake `xcodebuild` process to exercise the runner, failure paths,
 timeouts, argument handling, and installation boundaries. They do **not** demonstrate an app building
-in Xcode. CI is configured for Linux/macOS and Python 3.10/3.13; hosted results are available only after
-publication. See the [validation record](docs/validation.md) and
+in Xcode. CI is configured for Linux/macOS and Python 3.10/3.13; the [hosted checks](https://github.com/TensaiSolutions/swiftkeystone/actions) report toolkit results. See the [validation record](docs/validation.md) and
 [evaluation scenarios](docs/evaluations.md) for real Codex/app pilots.
 
 ## Boundaries of this release

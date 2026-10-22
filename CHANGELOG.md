@@ -1,5 +1,10 @@
 # Changelog
 
+## Unreleased
+
+- Clarify release download/checksum verification, helper location, local schemes, and apps without tests.
+- Explicitly report missing automated-test coverage for build-only profiles.
+
 ## 0.1.0 — foundation preview
 
 - Renamed iOS Forge to SwiftKeystone; release archives use `swiftkeystone-0.1.0`.

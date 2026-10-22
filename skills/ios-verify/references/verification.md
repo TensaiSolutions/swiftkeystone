@@ -38,3 +38,7 @@ An agent's final report should state:
 
 No result field certifies App Store readiness. A passing build/test run remains useful when some
 manual checks are outstanding, as long as those limits are explicit.
+
+For a build-only profile, the console explicitly states that automated tests were not configured or run,
+and `report.json` lists automated tests under `not_verified`. A passing status retains its meaning:
+only the selected checks passed. Existing v0.1.0 reports do not have this additional build-only reminder.

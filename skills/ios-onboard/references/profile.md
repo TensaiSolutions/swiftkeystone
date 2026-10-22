@@ -9,7 +9,7 @@ Required fields:
 - `schema_version`: integer `1`.
 - `name`: app display name for reports.
 - `project`: relative `.xcodeproj` or `.xcworkspace` path inside the app root. Parent traversal is rejected; resolved links may not escape the root.
-- `scheme`: existing shared app scheme.
+- `scheme`: existing app scheme. Prefer a committed shared scheme for reproducible team/CI use.
 - `destination`: an Xcode destination string. Prefer an available simulator UUID to an ambiguous device name. Discover it through the selected Xcode installation.
 - `checks`: a nonempty ordered array of `build` and/or `test`, without duplicates.
 - `timeout_seconds`: integer from 1 through 7200, per check.
@@ -31,3 +31,7 @@ Use the app's existing tooling when those are required and record the evidence s
 A default test plan selected by the existing shared scheme is honored by Xcode without adding a
 profile field. The CLI does not override that selection with a `-testPlan` option. Confirm that every
 intended test target exists and is enabled in that plan; an orphaned scheme reference adds no coverage.
+
+If no test target or test action exists, record that gap before verification. After explicit review,
+`"checks": ["build"]` establishes a compilation-only baseline. Never silently remove a failing test
+check to get a green result. `init` does not inspect test availability and keeps its build/test default.
