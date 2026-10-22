@@ -252,6 +252,8 @@ def verify(args):
               "verification_scope": "Configured commands and Xcode test summary; inspect test cases for behaviour coverage.",
               "not_verified": ["User journeys beyond configured tests", "Physical device behavior",
                                "Accessibility beyond configured automated checks", "Release readiness"]}
+    if "test" not in profile["checks"]:
+        report["not_verified"].append("Automated tests (not configured)")
     evidence = run / "report.json"
     write_json(evidence, report)
     for name, argv in commands(profile, app, run):
@@ -310,6 +312,8 @@ def verify(args):
     report["finished_at"] = dt.datetime.now(dt.timezone.utc).isoformat()
     write_json(evidence, report)
     print(f"{report['status']}: {evidence}")
+    if "test" not in profile["checks"]:
+        print("Scope: build only; automated tests were not configured or run.")
     for entry in report["checks"]:
         summary = entry.get("test_summary", {})
         if "totalTestCount" in summary:

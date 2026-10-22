@@ -92,3 +92,19 @@ signing/submission remain unvalidated.
 This is evidence for a simulator-tested foundation preview, not universal iOS compatibility.
 The companion source archive includes the generated Xcode project and tests, but excludes local profiles,
 Git history, raw logs, result bundles, and application/test data. See docs/new-project.md to repeat the workflow.
+
+## Published-release adoption check
+
+The public v0.1.0 ZIP and SHA-256 asset were downloaded into a clean directory and used to onboard
+a third, isolated existing app. Extraction, dry-run installation, repeated installation, profile setup,
+and command discovery passed. The app built on an iOS 26.5 simulator destination without source or
+Xcode setting changes. It had no test target: the default build/test baseline correctly failed its test
+action, while an explicitly selected build-only baseline passed.
+
+This exposed unclear first-run guidance and a missing build-only scope reminder. Unreleased fixes
+clarify download/checksum steps, helper location, scheme portability, and apps without tests; the
+console and JSON now explicitly identify absent automated-test coverage. The updated helper also
+passed the real build-only check. All 21 current portable tests pass. The v0.1.0 assets remain unchanged.
+
+This same-agent clean-artifact check is not independent user research, automatic skill-discovery UI
+validation, or behavioral coverage of the app. Private evidence remains outside this repository.
