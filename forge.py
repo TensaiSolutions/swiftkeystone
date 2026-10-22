@@ -291,7 +291,13 @@ def verify(args):
                 if reason:
                     entry.update(status="failed", failure_reason=reason)
         if entry["status"] != "passed":
-            entry["diagnostic"] = entry.get("failure_reason") or entry.get("error") or failure_diagnostic(Path(entry["log"]))
+            failures = entry.get("test_summary", {}).get("testFailures", [])
+            if not isinstance(failures, list):
+                failures = []
+            test_failure = next((failure.get("failureText") for failure in failures
+                                 if isinstance(failure, dict) and isinstance(failure.get("failureText"), str)
+                                 and failure["failureText"].strip()), None)
+            entry["diagnostic"] = entry.get("failure_reason") or entry.get("error") or (test_failure[:2000] if test_failure else None) or failure_diagnostic(Path(entry["log"]))
             print(f"{name}: {entry['status']}: {entry['diagnostic']}")
         write_json(evidence, report)
         if entry["status"] != "passed":

@@ -13,4 +13,7 @@
 - Verification rejects missing/unreadable result summaries and zero/all-skipped test runs.
 - Documented new-project generation and first-baseline workflow.
 
-Physical-device validation, a second existing-app pilot, and unattended maintenance remain future milestones.
+- Existing LaRecette pilot preserves its native project, default test plan, Swift 5 mode, and iOS 18.2 target.
+- Structured test-failure diagnostics and onboarding checks for orphaned or disabled test targets.
+
+Physical-device validation and unattended maintenance remain future milestones.

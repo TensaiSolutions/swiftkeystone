@@ -27,3 +27,7 @@ The default is build followed by test. Existing XCTest and Swift Testing targets
 through the scheme. UI tests run only if that scheme's test configuration includes them. Custom test
 plans, alternate build configurations, and signing/archive options are not CLI features in v0.1.
 Use the app's existing tooling when those are required and record the evidence separately.
+
+A default test plan selected by the existing shared scheme is honored by Xcode without adding a
+profile field. The CLI does not override that selection with a `-testPlan` option. Confirm that every
+intended test target exists and is enabled in that plan; an orphaned scheme reference adds no coverage.

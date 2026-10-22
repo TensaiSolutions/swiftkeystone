@@ -115,7 +115,7 @@ publication. See the [validation record](docs/validation.md) and
 - No automatic upstream installation/update, uninstall, custom shell commands, archive/export, or test-plan flags.
 - Install preflight prevents known conflicts; it is not a transactional updater and concurrent installations are unsupported.
 - Evidence retention is manual. Logs and test bundles are private until explicitly reviewed for sharing.
-- Simulator validation uses the disposable Forge Notes app. A second existing-app pilot and physical-device checks remain outstanding.
+- Simulator validation covers a new Forge Notes app and the existing LaRecette app. Physical-device checks and broader compatibility remain outstanding.
 
 For new projects, follow the [project creation and first-baseline workflow](docs/new-project.md).
 Real-app pilot results and remaining validation limits are recorded in [validation](docs/validation.md).

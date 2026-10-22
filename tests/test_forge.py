@@ -187,6 +187,16 @@ class ForgeTests(unittest.TestCase):
         self.assertIn("cannot find type Missing", out)
         self.assertIn("cannot find type Missing", self.report()["checks"][0]["diagnostic"])
 
+    def test_structured_test_failure_is_reported_when_log_has_no_error_text(self):
+        self.data["checks"] = ["test"]
+        self.save()
+        summary = dict(self.summary, passedTests=0, failedTests=1, result="Failed",
+                       testFailures=[{"failureText": "Large image URL did not match its input."}])
+        with self.fake_xcode("print('Tests failed'); sys.exit(65)"), patch("forge.platform.system", return_value="Darwin"), patch("forge.read_test_summary", return_value=summary):
+            code, out, _ = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
+        self.assertEqual(code, 1)
+        self.assertIn("Large image URL did not match its input.", out)
+
 
 if __name__ == "__main__":
     unittest.main()
