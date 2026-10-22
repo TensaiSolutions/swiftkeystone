@@ -34,7 +34,7 @@ An agent's final report should state:
 
 1. Changed behaviour and acceptance criteria covered.
 2. Configured command outcomes, source revision/dirty state, and private evidence paths.
-3. Simulator journeys actually exercised, including runtime/device and observed outcomes.
+3. Native Mac or simulator journeys actually exercised, including OS/runtime, host/device, and observed outcomes.
 4. Device, accessibility, performance, or release checks still outstanding.
 
 No result field certifies App Store readiness. A passing build/test run remains useful when some

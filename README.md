@@ -35,7 +35,7 @@ cd swiftkeystone-0.1.0
 Stop if the checksum does not match. Keep the extracted directory in a stable location.
 Cloning this repository is an alternative; it gives you the current branch rather than necessarily v0.1.0.
 Commands below run from that SwiftKeystone directory. Python 3.10+ is required.
-Actual app builds need macOS, full Xcode, and a compatible installed simulator runtime.
+App builds need macOS and full Xcode. iOS simulator runs also need a compatible installed runtime.
 Xcode 16 or newer is required to read test-result summaries.
 
 Preview installation into your app:
