@@ -1,5 +1,5 @@
 #!/usr/bin/env python3
-"""iOS Forge: dependency-free project setup and verification evidence."""
+"""SwiftKeystone: dependency-free project setup and verification evidence."""
 import argparse
 import datetime as dt
 import hashlib
@@ -341,7 +341,7 @@ def main(argv=None):
     try:
         return args.func(args) or 0
     except (ForgeError, OSError, ValueError, subprocess.SubprocessError) as error:
-        print(f"ios-forge: {error}", file=sys.stderr)
+        print(f"swiftkeystone: {error}", file=sys.stderr)
         return 2
 
 

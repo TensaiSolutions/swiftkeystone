@@ -1,6 +1,6 @@
 {
   "$schema": "https://json-schema.org/draft/2020-12/schema",
-  "title": "iOS Forge app profile v1",
+  "title": "SwiftKeystone app profile v1",
   "type": "object",
   "additionalProperties": false,
   "required": ["schema_version", "name", "project", "scheme", "destination", "checks", "timeout_seconds"],

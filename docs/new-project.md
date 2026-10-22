@@ -1,8 +1,8 @@
 # Starting an iOS app from scratch
 
 The Forge Notes pilot uses this path: establish the product journey, generate an Xcode project,
-discover the actual scheme/destination, install Forge, establish a baseline, then implement features.
-Forge itself does not install a project generator. XcodeGen 2.46.0 was already installed for the pilot.
+discover the actual scheme/destination, install SwiftKeystone, establish a baseline, then implement features.
+SwiftKeystone itself does not install a project generator. XcodeGen 2.46.0 was already installed for the pilot.
 
 ## Create and generate
 

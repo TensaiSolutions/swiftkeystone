@@ -1,4 +1,4 @@
-# iOS Forge validation
+# SwiftKeystone validation
 
 Validated locally on 2026-10-22 with Xcode 26.6 (17F113), Swift compiler 6.3.3,
 Python 3.12.3, and macOS 26.6.2 on Apple silicon. Nothing has been published to GitHub or the App Store.
@@ -6,7 +6,7 @@ Python 3.12.3, and macOS 26.6.2 on Apple silicon. Nothing has been published to 
 ## New app: Forge Notes
 
 Forge Notes was created from a product brief and a saved acceptance plan, using the four installed
-Forge workflows. XcodeGen 2.46.0, already installed on the machine, generated a shared-scheme Xcode
+SwiftKeystone workflows. XcodeGen 2.46.0, already installed on the machine, generated a shared-scheme Xcode
 project. The app targets iOS 18 and uses SwiftUI, a main-actor observable store, and atomic JSON files.
 No third-party app library or remote service was added. Operational evidence remains outside this repository.
 
@@ -31,10 +31,10 @@ Seven isolated fault scenarios were detected as expected, with source/profile re
 4. Unavailable simulator UUID: failed with the native destination diagnostic.
 5. Favourite persistence regression: the existing reload test failed when favourite state was lost on disk.
 6. One-second timeout: the real build process group was terminated; later checks were not run.
-7. All-skipped test scheme: Xcode rejected its test action and reported zero tests; Forge reported failure.
+7. All-skipped test scheme: Xcode rejected its test action and reported zero tests; SwiftKeystone reported failure.
 
 The native empty-scheme case returned a nonzero Xcode exit code. Separate portable tests also prove
-that Forge rejects a synthetic successful command paired with zero, all-skipped, missing, unreadable,
+that SwiftKeystone rejects a synthetic successful command paired with zero, all-skipped, missing, unreadable,
 or failing test-result evidence. We do not claim that Xcode returned a false success in the native case.
 
 ## Issues found and fixed
@@ -44,7 +44,7 @@ or failing test-result evidence. We do not claim that Xcode returned a false suc
   further section-heading contrast difference; moving the headings into labelled form content fixed it.
 - An editing UI test assumed a cursor position. It now verifies the entered draft is the value saved
   and reloaded without depending on where a tap places the insertion point.
-- Forge reports previously exposed only command outcomes. They now include actual result-bundle test
+- SwiftKeystone reports previously exposed only command outcomes. They now include actual result-bundle test
   counts/destinations, Xcode version, source/profile fingerprints, and failure diagnostics. Missing or
   zero-execution evidence cannot produce a passing test check; timeout diagnostics name the configured limit.
 - The onboarding skill now includes a documented project-generation and first-baseline reference.
@@ -74,10 +74,10 @@ app/unit target settings, and signing settings were preserved. Changes remain on
 - Test persistence now uses explicit in-memory contexts with an isolation check. Original tests already
   passed twice; this improvement is not evidence of reproduced persistence flakiness.
 
-The pilot also exposed a Forge diagnostic gap: structured result-bundle failures now supply the useful
+The pilot also exposed a SwiftKeystone diagnostic gap: structured result-bundle failures now supply the useful
 message when the text log lacks one. Onboarding now explicitly checks that test-plan targets exist and
 are enabled. App-specific evidence, source archives, and the reviewable patch remain outside tracked
-Forge distribution files. Simulator results do not establish physical-device or live-service behavior.
+SwiftKeystone distribution files. Simulator results do not establish physical-device or live-service behavior.
 
 ## Portable checks and limits
 

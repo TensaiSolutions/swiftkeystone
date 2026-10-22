@@ -2,6 +2,10 @@
 
 ## 0.1.0 — foundation preview
 
+- Renamed iOS Forge to SwiftKeystone; release archives use `swiftkeystone-0.1.0`.
+- Retained `forge.py`, `.ios-forge/app.json`, and existing skill commands for compatibility.
+- The broader name does not expand this preview beyond its validated iOS workflows.
+
 - Four Codex workflows: onboarding, feature planning, feature implementation, and verification.
 - Project-scoped installation with conflict preflight and dry-run support.
 - Versioned app profile, JSON schema, and dependency-free validation.

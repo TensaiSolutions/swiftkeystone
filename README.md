@@ -1,16 +1,27 @@
-# iOS Forge
+# SwiftKeystone
 
-Reusable iOS development workflows for Codex: onboard an app, plan a feature,
+A reusable development workflow framework for Swift apps with Codex: onboard an app, plan a feature,
 implement a bounded change, and collect honest verification evidence.
 
 **v0.1.0 — foundation preview.** Four installable skills and a dependency-free Python helper.
-No account, service, API key, or global configuration change is required by Forge itself.
+No account, service, API key, or global configuration change is required by SwiftKeystone itself.
 You use it within your existing Codex environment.
+
+The name reflects the goal: connect planning, implementation, and verification into a dependable
+pattern for Swift app development. **This preview's skills and real-app validation focus on iOS.**
+Support and validation for other Apple platforms are future work.
+
+The project was previously called iOS Forge. For compatibility, v0.1 keeps the `forge.py` entry point,
+`.ios-forge/app.json` profile, and `$ios-*` skill names. Existing profiles need no migration.
+Updated skill bundles still require manual review when they differ from an installed copy;
+the installer will not overwrite them.
+
+Release archives are named `swiftkeystone-0.1.0.zip`, containing a `swiftkeystone-0.1.0/` directory.
 
 ## Start here
 
 Download a release archive or clone this repository and keep it in a stable location.
-Commands below run from that iOS Forge directory. Python 3.10+ is required.
+Commands below run from that SwiftKeystone directory. Python 3.10+ is required.
 Actual app builds need macOS, full Xcode, and a compatible installed simulator runtime.
 Xcode 16 or newer is required to read test-result summaries.
 
@@ -21,7 +32,7 @@ python3 forge.py install --app "/path/to/MyApp" --dry-run
 python3 forge.py install --app "/path/to/MyApp"
 ```
 
-This copies only Forge's four skills into the app's `.agents/skills/` directory.
+This copies only SwiftKeystone's four skills into the app's `.agents/skills/` directory.
 It preserves `AGENTS.md`, unrelated skills, and global settings. An identical installation is a no-op;
 a differing existing skill stops installation before any copying. Review updates manually in v0.1.
 Do not install skills into repositories you do not trust without reading them.
@@ -41,7 +52,7 @@ python3 forge.py validate "/path/to/MyApp/.ios-forge/app.json"
 python3 forge.py doctor --app "/path/to/MyApp"
 ```
 
-Replace the sample values; Forge does not choose an arbitrary simulator or scheme.
+Replace the sample values; SwiftKeystone does not choose an arbitrary simulator or scheme.
 `doctor` discovers executable prerequisites and a valid profile; it does not certify Xcode health.
 See the [profile contract](docs/profile.md) and [example profile](examples/app-profile.json).
 
@@ -80,12 +91,12 @@ Reading test summaries requires Xcode 16 or newer.
 `passed` means the configured commands and test-result evidence passed. UI journeys and automated
 accessibility audits can run through the app's XCTest UI tests; inspect those tests for actual coverage.
 Physical-device behaviour, manual accessibility, and release readiness require their own evidence.
-Forge's CLI does not directly drive the simulator UI.
+SwiftKeystone's CLI does not directly drive the simulator UI.
 See [verification and evidence handling](docs/verification.md).
 
 ## Specialist skills
 
-Forge works without third-party skills. The [candidate registry](upstream/registry.json) identifies
+SwiftKeystone works without third-party skills. The [candidate registry](upstream/registry.json) identifies
 SwiftUI, concurrency, testing, and simulator projects worth evaluating. Nothing is bundled or installed
 from these projects in this release. A profile's `specialist_skills` field is advisory.
 
@@ -124,4 +135,4 @@ Real-app pilot results and remaining validation limits are recorded in [validati
 
 See [GitHub publishing](docs/publishing.md), [contributing](CONTRIBUTING.md),
 [changelog](CHANGELOG.md), and [acknowledgements](ACKNOWLEDGEMENTS.md).
-Original iOS Forge material is MIT licensed. Third-party candidate projects retain their own licenses.
+Original SwiftKeystone material is MIT licensed. Third-party candidate projects retain their own licenses.

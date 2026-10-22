@@ -1,6 +1,6 @@
 # Acknowledgements and provenance
 
-iOS Forge is inspired by [Nightforge](https://github.com/jfreal/nightforge), especially the separation
+SwiftKeystone is inspired by [Nightforge](https://github.com/jfreal/nightforge), especially the separation
 of shared workflows, adapters, project configuration, and operational memory. Nightforge is published
 under the [Unlicense](https://github.com/jfreal/nightforge/blob/main/LICENSE).
 This release contains original workflow instructions and helper code; no Nightforge implementation is vendored.

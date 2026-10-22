@@ -2,7 +2,7 @@
 
 Every executed CLI run gets a unique directory outside the checkout with:
 
-- `report.json`: Forge version, UTC timestamps, app name, source commit, dirty state, Git-visible source
+- `report.json`: SwiftKeystone version, UTC timestamps, app name, source commit, dirty state, Git-visible source
   fingerprint, profile hash, Xcode version, commands, per-check outcomes, test counts and destinations
   from Xcode's result bundle, and explicit unverified categories.
 - `build.log` and/or `test.log`: full command output for diagnosis.
