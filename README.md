@@ -12,6 +12,7 @@ You use it within your existing Codex environment.
 Download a release archive or clone this repository and keep it in a stable location.
 Commands below run from that iOS Forge directory. Python 3.10+ is required.
 Actual app builds need macOS, full Xcode, and a compatible installed simulator runtime.
+Xcode 16 or newer is required to read test-result summaries.
 
 Preview installation into your app:
 
@@ -72,9 +73,14 @@ python3 forge.py verify --app "/path/to/MyApp" \
 Choose an output directory **outside the app checkout**. Each run gets its own build output,
 logs, JSON report, and Xcode test result bundle when produced. A failed check stops later checks;
 timeouts terminate the launched process group. Nonzero exit codes make failures usable in CI.
+Reports include Xcode version, source/profile fingerprints, actual test counts and destinations,
+and bounded failure diagnostics. Tests with no executed cases or unreadable result evidence cannot pass.
+Reading test summaries requires Xcode 16 or newer.
 
-`passed` means the configured Xcode commands passed. Simulator journeys, physical-device testing,
-accessibility, and release readiness require their own evidence. Forge's CLI does not drive the simulator UI.
+`passed` means the configured commands and test-result evidence passed. UI journeys and automated
+accessibility audits can run through the app's XCTest UI tests; inspect those tests for actual coverage.
+Physical-device behaviour, manual accessibility, and release readiness require their own evidence.
+Forge's CLI does not directly drive the simulator UI.
 See [verification and evidence handling](docs/verification.md).
 
 ## Specialist skills
@@ -98,7 +104,7 @@ python3 scripts/package_release.py
 Tests use temporary projects and a fake `xcodebuild` process to exercise the runner, failure paths,
 timeouts, argument handling, and installation boundaries. They do **not** demonstrate an app building
 in Xcode. CI is configured for Linux/macOS and Python 3.10/3.13; hosted results are available only after
-publication. See the [initial validation record](docs/validation.md) and
+publication. See the [validation record](docs/validation.md) and
 [evaluation scenarios](docs/evaluations.md) for real Codex/app pilots.
 
 ## Boundaries of this release
@@ -109,10 +115,10 @@ publication. See the [initial validation record](docs/validation.md) and
 - No automatic upstream installation/update, uninstall, custom shell commands, archive/export, or test-plan flags.
 - Install preflight prevents known conflicts; it is not a transactional updater and concurrent installations are unsupported.
 - Evidence retention is manual. Logs and test bundles are private until explicitly reviewed for sharing.
-- A real-app pilot and a second-app reuse test remain required before calling this production-proven.
+- Simulator validation uses the disposable Forge Notes app. A second existing-app pilot and physical-device checks remain outstanding.
 
-The next milestone is to run one feature and one bug fix through these workflows in an existing app,
-then onboard a second app without changing the shared skills.
+For new projects, follow the [project creation and first-baseline workflow](docs/new-project.md).
+Real-app pilot results and remaining validation limits are recorded in [validation](docs/validation.md).
 
 ## Publishing and attribution
 

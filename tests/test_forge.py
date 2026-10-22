@@ -27,6 +27,11 @@ class ForgeTests(unittest.TestCase):
                      "scheme": "An App", "destination": "platform=iOS Simulator,id=test-uuid",
                      "checks": ["build", "test"], "timeout_seconds": 5}
         forge.write_json(self.profile, self.data)
+        self.summary = {"totalTestCount": 1, "passedTests": 1, "failedTests": 0, "skippedTests": 0,
+                        "expectedFailures": 0, "result": "Passed"}
+        self.summary_patch = patch("forge.read_test_summary", return_value=self.summary)
+        self.summary_patch.start()
+        self.addCleanup(self.summary_patch.stop)
 
     def call(self, *args):
         with contextlib.redirect_stdout(io.StringIO()) as out, contextlib.redirect_stderr(io.StringIO()) as err:
@@ -39,7 +44,7 @@ class ForgeTests(unittest.TestCase):
     def fake_xcode(self, body):
         binary = self.base / "bin" / "xcodebuild"
         binary.parent.mkdir()
-        binary.write_text(f"#!{sys.executable}\nimport sys, time, json\n{body}\n")
+        binary.write_text(f"#!{sys.executable}\nimport sys, time, json\nif '-version' in sys.argv:\n    print('Xcode Test Fixture'); sys.exit(0)\n{body}\n")
         binary.chmod(0o755)
         return patch.dict(os.environ, {"PATH": str(binary.parent) + os.pathsep + os.environ.get("PATH", "")})
 
@@ -154,12 +159,33 @@ class ForgeTests(unittest.TestCase):
         self.assertEqual(code, 1)
         report = self.report()
         self.assertEqual(report["checks"][0]["status"], "timed_out")
+        self.assertIn("Timed out after 1 seconds", report["checks"][0]["diagnostic"])
         self.assertEqual(report["checks"][1]["status"], "not_run")
 
     def test_unsupported_host_does_not_create_evidence(self):
         with patch("forge.platform.system", return_value="Linux"):
             self.assertEqual(self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))[0], 2)
         self.assertFalse(self.output.exists())
+
+    def test_zero_skipped_missing_and_failed_test_results_cannot_pass(self):
+        self.data["checks"] = ["test"]
+        self.save()
+        with self.fake_xcode("sys.exit(0)"), patch("forge.platform.system", return_value="Darwin"):
+            for summary in (
+                dict(self.summary, totalTestCount=0, passedTests=0),
+                dict(self.summary, skippedTests=1, passedTests=0),
+                {"error": "Result bundle missing"},
+                dict(self.summary, result="Failed", passedTests=0, failedTests=1),
+            ):
+                with self.subTest(summary=summary), patch("forge.read_test_summary", return_value=summary):
+                    self.assertEqual(self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))[0], 1)
+
+    def test_failure_reports_diagnostic(self):
+        with self.fake_xcode("print('source.swift:1: error: cannot find type Missing'); sys.exit(65)"), patch("forge.platform.system", return_value="Darwin"):
+            code, out, _ = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
+        self.assertEqual(code, 1)
+        self.assertIn("cannot find type Missing", out)
+        self.assertIn("cannot find type Missing", self.report()["checks"][0]["diagnostic"])
 
 
 if __name__ == "__main__":

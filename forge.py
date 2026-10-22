@@ -7,6 +7,7 @@ import json
 import os
 from pathlib import Path
 import platform
+import re
 import shutil
 import subprocess
 import sys
@@ -165,6 +166,63 @@ def commands(profile, app, output):
         yield check, command + [check]
 
 
+def toolchain_info():
+    try:
+        result = subprocess.run(["xcodebuild", "-version"], capture_output=True, text=True, timeout=15)
+        return {"xcode": result.stdout.strip() if result.returncode == 0 else None,
+                "error": result.stderr.strip()[:1000] if result.returncode else None}
+    except (OSError, subprocess.SubprocessError) as error:
+        return {"xcode": None, "error": str(error)}
+
+
+def source_fingerprint(app):
+    """Hash Git-visible file contents, including untracked work, without storing their contents."""
+    try:
+        result = subprocess.run(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
+                                cwd=app, capture_output=True, check=True, timeout=15)
+        digest = hashlib.sha256()
+        for name in sorted(set(result.stdout.split(b"\x00")) - {b""}):
+            path = app / os.fsdecode(name)
+            if path.is_symlink():
+                contents = b"symlink:" + os.fsencode(os.readlink(path))
+            elif path.is_file():
+                contents = path.read_bytes()
+            else:
+                contents = b"missing-or-nonregular"
+            digest.update(name + b"\x00" + hashlib.sha256(contents).digest())
+        return {"sha256": digest.hexdigest(), "scope": "Git-visible files; ignored files and link targets excluded"}
+    except (OSError, subprocess.SubprocessError) as error:
+        return {"sha256": None, "error": str(error)}
+
+
+def read_test_summary(bundle):
+    if not bundle.is_dir():
+        return {"error": "Xcode did not produce the configured test result bundle."}
+    try:
+        result = subprocess.run(["xcrun", "xcresulttool", "get", "test-results", "summary", "--path", str(bundle), "--compact"],
+                                capture_output=True, text=True, timeout=30)
+        if result.returncode:
+            return {"error": "Could not read Xcode test summary: " + (result.stderr or result.stdout).strip()[:1500]}
+        data = json.loads(result.stdout)
+        keys = ("totalTestCount", "passedTests", "failedTests", "skippedTests", "expectedFailures")
+        if not isinstance(data, dict) or any(type(data.get(key)) is not int or data[key] < 0 for key in keys):
+            return {"error": "Xcode test summary has missing or invalid test counts."}
+        return {key: data[key] for key in (*keys, "result", "devicesAndConfigurations", "testFailures") if key in data}
+    except (OSError, ValueError, subprocess.SubprocessError) as error:
+        return {"error": f"Could not read Xcode test summary: {error}"}
+
+
+def failure_diagnostic(log):
+    try:
+        with log.open("rb") as handle:
+            handle.seek(max(0, log.stat().st_size - 131072))
+            lines = handle.read().decode("utf-8", errors="replace").splitlines()
+        matches = [line.strip() for line in lines if re.search(r"error:|Expectation failed|Testing failed:", line)]
+        return matches[0][:2000] if matches else "Check failed; inspect its private log for details."
+    except OSError as error:
+        return f"Could not read check log: {error}"
+
+
 def verify(args):
     app = app_path(args.app)
     profile_path = contained(app / ".ios-forge" / "app.json", app)
@@ -188,9 +246,12 @@ def verify(args):
     report = {"forge_version": VERSION, "started_at": dt.datetime.now(dt.timezone.utc).isoformat(),
               "app": profile["name"], "commit": git.stdout.strip() if git.returncode == 0 else None,
               "dirty": bool(dirty.stdout.strip()) if dirty.returncode == 0 else None,
+              "source_fingerprint": source_fingerprint(app), "toolchain": toolchain_info(),
               "profile_sha256": hashlib.sha256(profile_path.read_bytes()).hexdigest(),
               "status": "running", "checks": [],
-              "not_verified": ["Simulator user journeys", "Physical device behavior", "Accessibility", "Release readiness"]}
+              "verification_scope": "Configured commands and Xcode test summary; inspect test cases for behaviour coverage.",
+              "not_verified": ["User journeys beyond configured tests", "Physical device behavior",
+                               "Accessibility beyond configured automated checks", "Release readiness"]}
     evidence = run / "report.json"
     write_json(evidence, report)
     for name, argv in commands(profile, app, run):
@@ -210,11 +271,28 @@ def verify(args):
                         pass
                     process.wait()
                     entry["status"] = "interrupted" if isinstance(error, KeyboardInterrupt) else "timed_out"
+                    entry["failure_reason"] = ("Interrupted; terminated the check's process group."
+                                               if isinstance(error, KeyboardInterrupt) else
+                                               f"Timed out after {profile['timeout_seconds']} seconds; terminated the check's process group.")
                     code = None
             entry["exit_code"] = code
             entry.setdefault("status", "passed" if code == 0 else "failed")
         except OSError as error:
             entry.update(status="failed", error=str(error), exit_code=None)
+        if name == "test" and entry.get("exit_code") is not None:
+            summary = read_test_summary(run / "Tests.xcresult")
+            entry["test_summary"] = summary
+            if entry["status"] == "passed":
+                reason = summary.get("error")
+                if not reason and (summary["totalTestCount"] == 0 or summary["totalTestCount"] <= summary["skippedTests"]):
+                    reason = "No tests executed; a successful command with only skipped or zero tests is not verification."
+                if not reason and (summary["failedTests"] or summary.get("result") != "Passed"):
+                    reason = "The Xcode result bundle does not report passing tests."
+                if reason:
+                    entry.update(status="failed", failure_reason=reason)
+        if entry["status"] != "passed":
+            entry["diagnostic"] = entry.get("failure_reason") or entry.get("error") or failure_diagnostic(Path(entry["log"]))
+            print(f"{name}: {entry['status']}: {entry['diagnostic']}")
         write_json(evidence, report)
         if entry["status"] != "passed":
             break
@@ -226,6 +304,10 @@ def verify(args):
     report["finished_at"] = dt.datetime.now(dt.timezone.utc).isoformat()
     write_json(evidence, report)
     print(f"{report['status']}: {evidence}")
+    for entry in report["checks"]:
+        summary = entry.get("test_summary", {})
+        if "totalTestCount" in summary:
+            print(f"Tests: {summary['passedTests']} passed, {summary['failedTests']} failed, {summary['skippedTests']} skipped ({summary['totalTestCount']} total).")
     return 0 if report["status"] == "passed" else 1
 
 

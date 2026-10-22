@@ -23,7 +23,7 @@ def main():
         metadata = (directory / "agents" / "openai.yaml").read_text()
         if f"${name}" not in metadata:
             errors.append(f"{name}: metadata prompt must name its skill")
-    for skill, document in (("ios-onboard", "profile"), ("ios-verify", "profile"), ("ios-verify", "verification")):
+    for skill, document in (("ios-onboard", "profile"), ("ios-onboard", "new-project"), ("ios-verify", "profile"), ("ios-verify", "verification")):
         if (ROOT / "docs" / f"{document}.md").read_bytes() != (ROOT / "skills" / skill / "references" / f"{document}.md").read_bytes():
             errors.append(f"{skill}: {document} reference differs from canonical docs")
     forge.load_profile(ROOT / "examples" / "app-profile.json")

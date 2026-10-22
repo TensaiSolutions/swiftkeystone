@@ -1,7 +1,8 @@
 # Workflow evaluation scenarios
 
-These are acceptance scenarios for a real Codex pilot, not completed evaluations.
-Portable tests cover the helper's mechanics. Use a disposable app checkout for these workflows.
+These are repeatable acceptance scenarios for real Codex pilots. Completed Forge Notes results and
+remaining limits are recorded in `docs/validation.md`; that record distinguishes actual execution from
+read-only skill evaluation. Portable tests cover the helper's mechanics. Use a disposable app checkout.
 
 ## Existing app onboarding
 

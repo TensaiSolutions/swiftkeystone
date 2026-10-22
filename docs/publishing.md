@@ -14,7 +14,9 @@ the package scripts. Choose the destination account/organisation and visibility 
 4. Let package CI run. Its Linux/macOS jobs test the helper; they do not compile an iOS app.
 5. After CI passes, tag the reviewed commit `v0.1.0` and create a prerelease titled
    "iOS Forge 0.1.0 — Foundation Preview". Attach the generated ZIP and SHA-256 checksum.
-6. Use the 0.1.0 changelog section as release notes and retain the unvalidated-real-app limitation.
+6. Use the 0.1.0 changelog section as release notes. Attach the companion Forge Notes source archive and
+   sanitised validation summary when publishing the pilot. Retain the physical-device, second-app, and
+   hosted-CI limitations rather than describing the preview as universally validated.
 
 Do not mark this release as production-proven until the pilot scenarios have actual recorded results.
 Building an archive is not proof it has been published or that hosted CI has run.

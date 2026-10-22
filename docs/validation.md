@@ -1,19 +1,71 @@
-# Foundation preview validation
+# iOS Forge validation: Forge Notes
 
-Local validation on 2026-10-22 used Python 3.12.3 on macOS 26.6.2 (Apple silicon).
+Validated locally on 2026-10-22 with Xcode 26.6 (17F113), Swift compiler 6.3.3, Swift 6 language mode,
+Python 3.12.3, and macOS 26.6.2 on Apple silicon. Nothing has been published to GitHub or the App Store.
 
-- 14 automated tests passed, covering profile creation/validation, file preservation, install conflict
-  preflight, symlink boundaries, dry runs, command argument handling, successful/failed/timed-out child
-  processes, stopped checks, evidence permissions, and reproducible archive extraction/installation.
-- Distribution checks passed for four self-contained skill bundles, example configuration, schema
-  syntax, candidate registry policy, local reference links, and bundled documentation consistency.
-- Skill frontmatter and UI metadata were parsed as YAML with the system Ruby YAML parser.
-  The Skill Creator's Python validator could not run because its PyYAML dependency was unavailable.
+## Real app results
 
-These checks used a fake `xcodebuild` executable. No real iOS project was compiled, no simulator
-journey was exercised, no third-party skill was executed, and no App Store operation occurred.
-The GitHub Actions matrix is configured but has not run on hosted infrastructure before publication.
-Real Codex/app evaluation scenarios in `docs/evaluations.md` remain pending.
+Forge Notes was created from a product brief and a saved acceptance plan, using the four installed
+Forge workflows. XcodeGen 2.46.0, already installed on the machine, generated a shared-scheme Xcode
+project. The app targets iOS 18 and uses SwiftUI, a main-actor observable store, and atomic JSON files.
+No third-party app library or remote service was added. Operational evidence remains outside this repository.
 
-Re-run the checks from README after changes. This file records the initial foundation validation;
-it is not a claim about arbitrary app compatibility or future revisions.
+- Initial scaffold: real build, one Swift Testing baseline test, and one XCTest UI launch test passed.
+- Final iPhone 17 Pro / iOS 26.5: build passed; **14 tests passed, 0 failed, 0 skipped**.
+- Final iPhone 16 Pro / iOS 18.0: build passed; **14 tests passed, 0 failed, 0 skipped**.
+- Both final runs used the same clean source revision and source fingerprint; machine-specific
+  simulator configuration is hashed separately. Full Xcode result bundles and logs are retained privately.
+
+The final suite includes nine model/persistence tests and five UI tests. It covers create/edit/cancel,
+favourite filtering and unstar, termination/relaunch persistence, blank-title validation, corrupt-file
+preservation, failed-save state/draft retention, and automated accessibility audits of empty, populated,
+and editor screens. Automated audit coverage is not a manual VoiceOver certification.
+
+## Deliberate failures
+
+Seven isolated fault scenarios were detected as expected, with source/profile restored after every case:
+
+1. Incorrect assertion: the nine-test unit suite reported eight passes and one failure.
+2. Compilation error: build failed; the later test check was not run.
+3. Nonexistent scheme: failed with the native scheme diagnostic.
+4. Unavailable simulator UUID: failed with the native destination diagnostic.
+5. Favourite persistence regression: the existing reload test failed when favourite state was lost on disk.
+6. One-second timeout: the real build process group was terminated; later checks were not run.
+7. All-skipped test scheme: Xcode rejected its test action and reported zero tests; Forge reported failure.
+
+The native empty-scheme case returned a nonzero Xcode exit code. Separate portable tests also prove
+that Forge rejects a synthetic successful command paired with zero, all-skipped, missing, unreadable,
+or failing test-result evidence. We do not claim that Xcode returned a false success in the native case.
+
+## Issues found and fixed
+
+- The real accessibility audits found contrast and large-text clipping issues. Explicit contrast styling,
+  expandable text layout, and flexible editor actions resolved the observed findings. iOS 18 exposed a
+  further section-heading contrast difference; moving the headings into labelled form content fixed it.
+- An editing UI test assumed a cursor position. It now verifies the entered draft is the value saved
+  and reloaded without depending on where a tap places the insertion point.
+- Forge reports previously exposed only command outcomes. They now include actual result-bundle test
+  counts/destinations, Xcode version, source/profile fingerprints, and failure diagnostics. Missing or
+  zero-execution evidence cannot produce a passing test check; timeout diagnostics name the configured limit.
+- The onboarding skill now includes a documented project-generation and first-baseline reference.
+
+## Installation and fresh context
+
+A separate local repository demonstrated a no-write dry run, identical repeated installation, preservation
+of AGENTS.md and uncommitted edits, unchanged branch/HEAD, and refusal to overwrite a customized skill.
+An independent fresh-context agent used only the installed onboarding/planning skills and project files
+to recover app conventions and produce a bounded feature plan. It performed no builds or implementation;
+this is evidence for context recovery and planning, not unattended development across fresh sessions.
+
+## Portable checks and limits
+
+All **19 portable tests** passed. Distribution checks passed for four self-contained skill bundles,
+references, example profile, schema syntax, candidate registry, and reproducible archive extraction/installation.
+YAML frontmatter/metadata were parsed with the system Ruby YAML parser; the optional Skill Creator
+Python validator was unavailable because PyYAML was not installed. No dependency was installed to bypass that.
+
+Physical devices, manual VoiceOver, dark mode/full device and text-size coverage, a second existing app,
+third-party specialist skill execution, hosted CI, and release signing/submission remain unvalidated.
+This is evidence for a simulator-tested foundation preview, not universal iOS compatibility.
+The companion source archive includes the generated Xcode project and tests, but excludes local profiles,
+Git history, raw logs, result bundles, and application/test data. See docs/new-project.md to repeat the workflow.
