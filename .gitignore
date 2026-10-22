@@ -1,0 +1,14 @@
+__pycache__/
+*.py[cod]
+.DS_Store
+.venv/
+work/
+dist/
+outputs/
+.ios-forge/
+*.xcresult/
+DerivedData/
+*.log
+.env
+.env.*
+!.env.example

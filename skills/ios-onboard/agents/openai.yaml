@@ -1,0 +1,4 @@
+interface:
+  display_name: "iOS Forge: Onboard"
+  short_description: "Discover app configuration and establish a baseline."
+  default_prompt: "Use $ios-onboard to onboard this app into iOS Forge."

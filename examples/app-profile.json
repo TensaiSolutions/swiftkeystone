@@ -1,0 +1,11 @@
+{
+  "schema_version": 1,
+  "name": "TrailNotes",
+  "project": "TrailNotes.xcodeproj",
+  "scheme": "TrailNotes",
+  "destination": "platform=iOS Simulator,id=REPLACE_WITH_AVAILABLE_SIMULATOR_UUID",
+  "checks": ["build", "test"],
+  "timeout_seconds": 900,
+  "architecture": "Preserve the existing feature folders and state ownership.",
+  "specialist_skills": ["swiftui-pro", "swift-concurrency-pro", "swift-testing-pro"]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "iOS Forge: Build Feature"
+  short_description: "Implement an authorized feature and collect evidence."
+  default_prompt: "Use $ios-build-feature to implement the agreed feature."

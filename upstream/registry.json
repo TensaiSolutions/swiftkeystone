@@ -1,0 +1,10 @@
+{
+  "schema_version": 1,
+  "policy": "Candidates only. Nothing is vendored, pinned for execution, or automatically installed. Audit and pin an exact revision before promoting a dependency.",
+  "candidates": [
+    {"name": "swiftui-pro", "repository": "https://github.com/twostraws/SwiftUI-Agent-Skill", "status": "candidate", "license_reported": "MIT", "revision": null, "purpose": "SwiftUI implementation and review"},
+    {"name": "swift-concurrency-pro", "repository": "https://github.com/twostraws/Swift-Concurrency-Agent-Skill", "status": "candidate", "license_reported": "MIT", "revision": null, "purpose": "Concurrency and isolation"},
+    {"name": "swift-testing-pro", "repository": "https://github.com/twostraws/Swift-Testing-Agent-Skill", "status": "candidate", "license_reported": "MIT", "revision": null, "purpose": "Swift Testing design"},
+    {"name": "ios-simulator-skill", "repository": "https://github.com/conorluddy/ios-simulator-skill", "status": "candidate", "license_reported": "MIT", "revision": null, "purpose": "Optional simulator interaction tooling"}
+  ]
+}

@@ -1,0 +1,4 @@
+interface:
+  display_name: "iOS Forge: Plan Feature"
+  short_description: "Plan a bounded feature with observable acceptance."
+  default_prompt: "Use $ios-plan-feature to plan the requested iOS feature."

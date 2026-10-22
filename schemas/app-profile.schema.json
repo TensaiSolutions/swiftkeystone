@@ -1,0 +1,20 @@
+{
+  "$schema": "https://json-schema.org/draft/2020-12/schema",
+  "title": "iOS Forge app profile v1",
+  "type": "object",
+  "additionalProperties": false,
+  "required": ["schema_version", "name", "project", "scheme", "destination", "checks", "timeout_seconds"],
+  "properties": {
+    "schema_version": {"type": "integer", "const": 1},
+    "name": {"type": "string", "minLength": 1, "pattern": "\\S", "not": {"pattern": "\u0000"}},
+    "project": {"type": "string", "pattern": "^(?!/)(?!.*(?:^|/)\\.\\.(?:/|$))[^\u0000]+\\.(xcodeproj|xcworkspace)$"},
+    "scheme": {"type": "string", "minLength": 1, "pattern": "\\S", "not": {"pattern": "\u0000"}},
+    "destination": {"type": "string", "minLength": 1, "pattern": "\\S", "not": {"pattern": "\u0000"}},
+    "checks": {"type": "array", "minItems": 1, "uniqueItems": true, "items": {"enum": ["build", "test"]}},
+    "timeout_seconds": {"type": "integer", "minimum": 1, "maximum": 7200},
+    "deployment_target": {"type": "string", "pattern": "\\S"},
+    "swift_version": {"type": "string", "pattern": "\\S"},
+    "architecture": {"type": "string", "pattern": "\\S"},
+    "specialist_skills": {"type": "array", "items": {"type": "string", "pattern": "\\S"}}
+  }
+}
