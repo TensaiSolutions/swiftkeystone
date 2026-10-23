@@ -28,7 +28,7 @@ state rather than certifying a hermetic build. The app profile has its own hash 
 Evidence is private operational data. Directories created for individual runs use private permissions,
 but parent directory policies and user sharing choices still apply. Logs and result bundles may include
 personal paths, application data, signing information, or secrets emitted by build scripts.
-Do not upload them automatically. Retention and deletion are manual in v0.1.
+Do not upload them automatically. Retention and deletion are manual in this preview.
 
 An agent's final report should state:
 

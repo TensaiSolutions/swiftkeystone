@@ -25,7 +25,7 @@ An `init` profile is a starting configuration, not proof that the project or sch
 
 The default is build followed by test. Existing XCTest and Swift Testing targets are both supported
 through the scheme. UI tests run only if that scheme's test configuration includes them. Custom test
-plans, alternate build configurations, and signing/archive options are not CLI features in v0.1.
+plans, alternate build configurations, and signing/archive options are not CLI features in this preview.
 Use the app's existing tooling when those are required and record the evidence separately.
 
 A default test plan selected by the existing shared scheme is honored by Xcode without adding a
