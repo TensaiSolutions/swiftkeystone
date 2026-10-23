@@ -13,22 +13,11 @@ import subprocess
 import sys
 import tempfile
 
-VERSION = "0.2.0"
+from keystone_common import ForgeError, inventory, write_json, source_fingerprint, private_output
+
+VERSION = "0.3.0"
 ROOT = Path(__file__).resolve().parent
 SKILLS = ("ios-onboard", "ios-plan-feature", "ios-build-feature", "ios-verify")
-
-
-class ForgeError(Exception):
-    pass
-
-
-def write_json(path, data):
-    path.parent.mkdir(parents=True, exist_ok=True)
-    with tempfile.NamedTemporaryFile("w", dir=path.parent, delete=False) as handle:
-        json.dump(data, handle, indent=2)
-        handle.write("\n")
-        temporary = Path(handle.name)
-    temporary.replace(path)
 
 
 def load_profile(path):
@@ -95,17 +84,6 @@ def init(args):
 def validate(args):
     load_profile(Path(args.profile))
     print("Profile is valid (schema version 1).")
-
-
-def inventory(directory):
-    """Fingerprint regular files; reject links rather than follow them into another tree."""
-    found = {}
-    for path in directory.rglob("*"):
-        if path.is_symlink():
-            raise ForgeError(f"Skill contains a symbolic link: {path}")
-        if path.is_file():
-            found[str(path.relative_to(directory))] = hashlib.sha256(path.read_bytes()).hexdigest()
-    return found
 
 
 def install(args):
@@ -175,26 +153,6 @@ def toolchain_info():
         return {"xcode": None, "error": str(error)}
 
 
-def source_fingerprint(app):
-    """Hash Git-visible file contents, including untracked work, without storing their contents."""
-    try:
-        result = subprocess.run(["git", "ls-files", "-z", "--cached", "--others", "--exclude-standard"],
-                                cwd=app, capture_output=True, check=True, timeout=15)
-        digest = hashlib.sha256()
-        for name in sorted(set(result.stdout.split(b"\x00")) - {b""}):
-            path = app / os.fsdecode(name)
-            if path.is_symlink():
-                contents = b"symlink:" + os.fsencode(os.readlink(path))
-            elif path.is_file():
-                contents = path.read_bytes()
-            else:
-                contents = b"missing-or-nonregular"
-            digest.update(name + b"\x00" + hashlib.sha256(contents).digest())
-        return {"sha256": digest.hexdigest(), "scope": "Git-visible files; ignored files and link targets excluded"}
-    except (OSError, subprocess.SubprocessError) as error:
-        return {"sha256": None, "error": str(error)}
-
-
 def read_test_summary(bundle):
     if not bundle.is_dir():
         return {"error": "Xcode did not produce the configured test result bundle."}
@@ -255,6 +213,7 @@ def verify(args):
               "dirty": bool(dirty.stdout.strip()) if dirty.returncode == 0 else None,
               "source_fingerprint": source_fingerprint(app), "toolchain": toolchain_info(),
               "profile_sha256": hashlib.sha256(profile_path.read_bytes()).hexdigest(),
+              "configuration": {key: profile[key] for key in ("project", "scheme", "destination", "checks")},
               "status": "running", "checks": [],
               "verification_scope": "Configured commands and Xcode test summary; inspect test cases for behaviour coverage.",
               "not_verified": ["User journeys beyond configured tests", "Other devices, hardware, and OS versions",
@@ -328,6 +287,49 @@ def verify(args):
     return 0 if report["status"] == "passed" else 1
 
 
+def audit_command(args):
+    from keystone_audit import audit
+    app = app_path(args.app)
+    profile = load_profile(contained(app / ".ios-forge" / "app.json", app))
+    result = audit(app, profile, args.reference_report)
+    result["forge_version"] = VERSION
+    text = json.dumps(result, indent=2) + "\n"
+    if args.output:
+        private_output(args.output, text, (app, ROOT))
+    print(text, end="")
+    return 1 if result["status"] == "findings" else 0
+
+
+def update_command(args):
+    from keystone_updates import stage_update
+    app = app_path(args.app)
+    result = stage_update(app, Path(args.from_release).expanduser(), ROOT, SKILLS,
+                          args.output_dir, args.dry_run)
+    result["forge_version"] = VERSION
+    print(json.dumps(result, indent=2))
+    return 1 if result["conflicts"] or not result.get("candidate_entrypoints_present", True) else 0
+
+
+def compare_command(args):
+    from keystone_evidence import compare
+    result = compare(args.before, args.after, args.restored)
+    text = json.dumps(result, indent=2) + "\n"
+    if args.output:
+        private_output(args.output, text, (ROOT,))
+    print(text, end="")
+    return 1 if result["status"] == "needs_review" else 0
+
+
+def summary_command(args):
+    from keystone_evidence import summarize
+    text, comparison = summarize(args.report, args.baseline, args.regression)
+    if args.output:
+        private_output(args.output, text, (ROOT,))
+    print(text, end="")
+    return 1 if comparison and (comparison["status"] == "needs_review" or
+                               (args.regression and not comparison["regression_cycle_supported"])) else 0
+
+
 def main(argv=None):
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--version", action="version", version=VERSION)
@@ -348,10 +350,33 @@ def main(argv=None):
             command.add_argument("--dry-run", action="store_true")
         if name == "verify":
             command.add_argument("--output-dir", required=True)
+    command = sub.add_parser("audit", help="Inspect static test wiring and local evidence; no builds or fetches")
+    command.add_argument("--app", required=True)
+    command.add_argument("--reference-report")
+    command.add_argument("--output")
+    command.set_defaults(func=audit_command)
+    command = sub.add_parser("update", help="Stage a three-way skill update and backup; never replace installed skills")
+    command.add_argument("--app", required=True)
+    command.add_argument("--from-release", required=True)
+    command.add_argument("--output-dir", required=True)
+    command.add_argument("--dry-run", action="store_true")
+    command.set_defaults(func=update_command)
+    command = sub.add_parser("compare", help="Compare completed verification reports")
+    command.add_argument("before")
+    command.add_argument("after")
+    command.add_argument("--restored")
+    command.add_argument("--output")
+    command.set_defaults(func=compare_command)
+    command = sub.add_parser("summary", help="Draft a bounded PR verification summary without private diagnostics")
+    command.add_argument("report")
+    command.add_argument("--baseline")
+    command.add_argument("--regression")
+    command.add_argument("--output")
+    command.set_defaults(func=summary_command)
     args = parser.parse_args(argv)
     try:
         return args.func(args) or 0
-    except (ForgeError, OSError, ValueError, subprocess.SubprocessError) as error:
+    except (ForgeError, OSError, ValueError, RecursionError, subprocess.SubprocessError) as error:
         print(f"swiftkeystone: {error}", file=sys.stderr)
         return 2
 

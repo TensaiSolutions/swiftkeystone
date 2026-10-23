@@ -10,7 +10,7 @@ sys.path.insert(0, str(ROOT))
 import forge
 
 DIRECTORIES = ("skills", "schemas", "examples", "docs", "upstream", "scripts", "tests", ".github")
-FILES = ("forge.py", "README.md", "AGENTS.md", "LICENSE", "ACKNOWLEDGEMENTS.md", "CONTRIBUTING.md", "CHANGELOG.md", ".gitignore")
+FILES = ("forge.py", "keystone_common.py", "keystone_audit.py", "keystone_evidence.py", "keystone_updates.py", "README.md", "AGENTS.md", "LICENSE", "ACKNOWLEDGEMENTS.md", "CONTRIBUTING.md", "CHANGELOG.md", ".gitignore")
 
 
 def package(destination):

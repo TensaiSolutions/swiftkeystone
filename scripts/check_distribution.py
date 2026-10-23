@@ -23,7 +23,7 @@ def main():
         metadata = (directory / "agents" / "openai.yaml").read_text()
         if f"${name}" not in metadata:
             errors.append(f"{name}: metadata prompt must name its skill")
-    for skill, document in (("ios-onboard", "profile"), ("ios-onboard", "new-project"), ("ios-verify", "profile"), ("ios-verify", "verification"), ("ios-onboard", "macos"), ("ios-verify", "macos")):
+    for skill, document in (("ios-onboard", "profile"), ("ios-onboard", "new-project"), ("ios-verify", "profile"), ("ios-verify", "verification"), ("ios-onboard", "macos"), ("ios-verify", "macos"), ("ios-onboard", "baseline-audit"), ("ios-onboard", "skill-updates"), ("ios-verify", "evidence-comparison")):
         if (ROOT / "docs" / f"{document}.md").read_bytes() != (ROOT / "skills" / skill / "references" / f"{document}.md").read_bytes():
             errors.append(f"{skill}: {document} reference differs from canonical docs")
     for example in ("app-profile.json", "macos-app-profile.json"):

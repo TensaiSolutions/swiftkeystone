@@ -1,5 +1,13 @@
 # Changelog
 
+## 0.3.0 — unreleased adoption and evidence preview
+
+- Add a portable static audit of project/workspace targets, scheme/default-plan wiring, local tracking state, and earlier source/profile evidence.
+- Compare completed v0.2/v0.3 reports and detected-failure/restoration inputs; draft bounded PR verification summaries without private diagnostics.
+- Stage three-way skill updates, exact backups, preserved local edits/deletions, and explicit conflicts without overwriting installed skills or profiles.
+- Keep legacy skills and schema-version-1 profiles compatible; bundle the new workflow references.
+- Expand portable coverage to 48 tests; validate a local LaRecette upgrade with 23 native tests and unchanged app/profile inputs.
+
 ## 0.2.0 — iOS and macOS foundation preview
 
 - Extend the existing workflow descriptions to native macOS while preserving `ios-*` skill aliases.
