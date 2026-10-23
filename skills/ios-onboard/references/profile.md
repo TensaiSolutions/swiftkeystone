@@ -10,7 +10,7 @@ Required fields:
 - `name`: app display name for reports.
 - `project`: relative `.xcodeproj` or `.xcworkspace` path inside the app root. Parent traversal is rejected; resolved links may not escape the root.
 - `scheme`: existing app scheme. Prefer a committed shared scheme for reproducible team/CI use.
-- `destination`: an Xcode destination string. Prefer an available simulator UUID to an ambiguous device name. Discover it through the selected Xcode installation.
+- `destination`: an Xcode destination string. Prefer an available simulator UUID to an ambiguous device name. Discover it through the selected Xcode installation. For native macOS, use a discovered `platform=macOS` destination instead; no simulator UUID is required.
 - `checks`: a nonempty ordered array of `build` and/or `test`, without duplicates.
 - `timeout_seconds`: integer from 1 through 7200, per check.
 

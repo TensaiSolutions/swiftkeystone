@@ -1,6 +1,6 @@
 # SwiftKeystone
 
-This repository distributes Codex skills and dependency-free Python helpers for iOS projects.
+This repository distributes Codex skills and dependency-free Python helpers for iOS and macOS projects.
 Keep app-specific data and operational evidence outside this repository.
 
 - Preserve existing app architecture, deployment targets, and user instructions.

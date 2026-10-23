@@ -16,7 +16,8 @@ or environment errors. A dry run returns 0 without running Xcode or creating evi
 Test checks require a readable result summary with executed tests and a passing result. A zero-test,
 all-skipped, unreadable, missing, or failing summary fails verification even if the command returned 0.
 The summary reader uses Xcode 16+ `xcresulttool get test-results summary`.
-Failures include a bounded diagnostic excerpt; the full private log remains the authority.
+Failures include a bounded diagnostic excerpt; when no error line exists, the runner uses Xcode's
+failed-build-step summary if available; the full private log remains the authority.
 A force-killed parent can leave a `running` report; treat it as incomplete, never as passed.
 
 The source fingerprint covers Git-visible file paths and contents, including untracked files and missing
@@ -33,7 +34,7 @@ An agent's final report should state:
 
 1. Changed behaviour and acceptance criteria covered.
 2. Configured command outcomes, source revision/dirty state, and private evidence paths.
-3. Simulator journeys actually exercised, including runtime/device and observed outcomes.
+3. Native Mac or simulator journeys actually exercised, including OS/runtime, host/device, and observed outcomes.
 4. Device, accessibility, performance, or release checks still outstanding.
 
 No result field certifies App Store readiness. A passing build/test run remains useful when some

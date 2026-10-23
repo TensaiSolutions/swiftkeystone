@@ -2,6 +2,11 @@
 
 ## Unreleased
 
+- Extend the existing workflow descriptions to native macOS while preserving `ios-*` skill aliases.
+- Add a native macOS profile example and guidance for local signing, document journeys, and separate UI schemes.
+- Report Xcode's failed build step when a failure log has no useful error line.
+- Keep evidence limits applicable to the selected destination rather than implying a Mac test used a simulator.
+
 - Clarify release download/checksum verification, helper location, local schemes, and apps without tests.
 - Explicitly report missing automated-test coverage for build-only profiles.
 

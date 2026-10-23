@@ -35,3 +35,4 @@ class PackageTests(unittest.TestCase):
                                     cwd=root, capture_output=True, text=True, timeout=30)
             self.assertEqual(result.returncode, 0, result.stderr)
             self.assertTrue((app / ".agents" / "skills" / "ios-verify" / "references" / "profile.md").exists())
+            self.assertTrue((app / ".agents" / "skills" / "ios-verify" / "references" / "macos.md").exists())

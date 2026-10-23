@@ -154,6 +154,29 @@ class ForgeTests(unittest.TestCase):
         self.assertIn("Automated tests (not configured)", report["not_verified"])
         summary.assert_not_called()
 
+    def test_native_macos_destination_runs_without_simulator_arguments(self):
+        self.data["destination"] = "platform=macOS,arch=arm64"
+        self.save()
+        with self.fake_xcode("print(json.dumps(sys.argv[1:]))"), patch("forge.platform.system", return_value="Darwin"):
+            code, _, error = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
+        self.assertEqual(code, 0, error)
+        report = self.report()
+        self.assertEqual(len(report["checks"]), 2)
+        for check in report["checks"]:
+            argv = json.loads(Path(check["log"]).read_text())
+            self.assertEqual(argv[argv.index("-destination") + 1], "platform=macOS,arch=arm64")
+            self.assertNotIn("iphonesimulator", argv)
+        self.assertEqual(report["checks"][1]["test_summary"]["passedTests"], 1)
+
+    def test_native_failed_build_step_is_reported_without_error_line(self):
+        log = "** BUILD FAILED **\nThe following build commands failed:\n\tValidate plug-in SwiftLintBuildToolPlugin in package swiftlintplugins\n"
+        with self.fake_xcode(f"print({log!r}); sys.exit(65)"), patch("forge.platform.system", return_value="Darwin"):
+            code, output, error = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
+        self.assertEqual(code, 1, error)
+        self.assertIn("Xcode build step failed: Validate plug-in", output)
+        self.assertIn("SwiftLintBuildToolPlugin", self.report()["checks"][0]["diagnostic"])
+        self.assertEqual(self.report()["checks"][1]["status"], "not_run")
+
     def test_failure_stops_later_checks(self):
         with self.fake_xcode("print('compiler error'); sys.exit(65)"), patch("forge.platform.system", return_value="Darwin"):
             code, _, _ = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))

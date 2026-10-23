@@ -150,7 +150,7 @@ def doctor(args):
         findings["profile"] = "valid"
     ready = findings["system"] == "Darwin" and all(findings[b] for b in ("git", "xcodebuild", "xcrun")) and findings["profile"] == "valid"
     findings["prerequisites_found"] = ready
-    findings["note"] = "Executable discovery only; verify Xcode selection, scheme and simulator with ios-onboard."
+    findings["note"] = "Executable discovery only; verify Xcode selection, scheme and destination with ios-onboard."
     print(json.dumps(findings, indent=2))
     return 0 if ready else 1
 
@@ -218,7 +218,14 @@ def failure_diagnostic(log):
             handle.seek(max(0, log.stat().st_size - 131072))
             lines = handle.read().decode("utf-8", errors="replace").splitlines()
         matches = [line.strip() for line in lines if re.search(r"error:|Expectation failed|Testing failed:", line)]
-        return matches[0][:2000] if matches else "Check failed; inspect its private log for details."
+        if matches:
+            return matches[0][:2000]
+        for index, line in enumerate(lines):
+            if line.strip() == "The following build commands failed:":
+                step = next((item.strip() for item in lines[index + 1:] if item.strip()), None)
+                if step:
+                    return ("Xcode build step failed: " + step)[:2000]
+        return "Check failed; inspect its private log for details."
     except OSError as error:
         return f"Could not read check log: {error}"
 
@@ -250,7 +257,7 @@ def verify(args):
               "profile_sha256": hashlib.sha256(profile_path.read_bytes()).hexdigest(),
               "status": "running", "checks": [],
               "verification_scope": "Configured commands and Xcode test summary; inspect test cases for behaviour coverage.",
-              "not_verified": ["User journeys beyond configured tests", "Physical device behavior",
+              "not_verified": ["User journeys beyond configured tests", "Other devices, hardware, and OS versions",
                                "Accessibility beyond configured automated checks", "Release readiness"]}
     if "test" not in profile["checks"]:
         report["not_verified"].append("Automated tests (not configured)")

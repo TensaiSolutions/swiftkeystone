@@ -8,8 +8,9 @@ No account, service, API key, or global configuration change is required by Swif
 You use it within your existing Codex environment.
 
 The name reflects the goal: connect planning, implementation, and verification into a dependable
-pattern for Swift app development. **This preview's skills and real-app validation focus on iOS.**
-Support and validation for other Apple platforms are future work.
+pattern for Swift app development. **The published v0.1.0 preview was validated on iOS.**
+The current branch adds native macOS workflow guidance; see the validation record for actual results.
+Support and validation for additional Apple platforms remain future work.
 
 The project was previously called iOS Forge. For compatibility, v0.1 keeps the `forge.py` entry point,
 `.ios-forge/app.json` profile, and `$ios-*` skill names. Existing profiles need no migration.
@@ -34,7 +35,7 @@ cd swiftkeystone-0.1.0
 Stop if the checksum does not match. Keep the extracted directory in a stable location.
 Cloning this repository is an alternative; it gives you the current branch rather than necessarily v0.1.0.
 Commands below run from that SwiftKeystone directory. Python 3.10+ is required.
-Actual app builds need macOS, full Xcode, and a compatible installed simulator runtime.
+App builds need macOS and full Xcode. iOS simulator runs also need a compatible installed runtime.
 Xcode 16 or newer is required to read test-result summaries.
 
 Preview installation into your app:
@@ -123,6 +124,14 @@ Physical-device behaviour, manual accessibility, and release readiness require t
 SwiftKeystone's CLI does not directly drive the simulator UI.
 See [verification and evidence handling](docs/verification.md).
 
+## Native macOS projects
+
+The current branch's four workflows also cover native macOS projects; the `ios-*` skill names are
+compatibility aliases. Use an actual Mac scheme and a discovered macOS destination, rather than an
+iOS simulator. See [macOS verification](docs/macos.md) and the
+[example Mac profile](examples/macos-app-profile.json). The released v0.1.0 ZIP does not include this
+new guidance; use a checkout of the current branch until a subsequent release is published.
+
 ## Specialist skills
 
 SwiftKeystone works without third-party skills. The [candidate registry](upstream/registry.json) identifies
@@ -154,7 +163,7 @@ in Xcode. CI is configured for Linux/macOS and Python 3.10/3.13; the [hosted che
 - No automatic upstream installation/update, uninstall, custom shell commands, archive/export, or test-plan flags.
 - Install preflight prevents known conflicts; it is not a transactional updater and concurrent installations are unsupported.
 - Evidence retention is manual. Logs and test bundles are private until explicitly reviewed for sharing.
-- Simulator validation covers a new Forge Notes app and the existing LaRecette app. Physical-device checks and broader compatibility remain outstanding.
+- Validation covers Forge Notes and LaRecette on iOS simulators, plus a native CotEditor macOS pilot on the current branch. The Mac document journey used a desktop UI tool; its XCTest UI runner was blocked. iPhone/iPad hardware and broader compatibility remain outstanding.
 
 For new projects, follow the [project creation and first-baseline workflow](docs/new-project.md).
 Real-app pilot results and remaining validation limits are recorded in [validation](docs/validation.md).

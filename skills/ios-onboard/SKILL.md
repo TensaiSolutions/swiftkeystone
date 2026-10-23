@@ -1,16 +1,19 @@
 ---
 name: ios-onboard
-description: Onboard a new or existing iOS app into SwiftKeystone by discovering its Xcode configuration, conventions, and verification baseline.
+description: Onboard a new or existing iOS or macOS app into SwiftKeystone by discovering its Xcode configuration, conventions, and verification baseline.
 ---
 
 Establish how this app is built and verified before changing its code.
 
 1. Read applicable `AGENTS.md` instructions and inspect the repository's current state. Distinguish an existing app from a request to create one. For a new app, establish the product's first user journey, platform requirements, and persistence needs before scaffolding.
    For project generation and first-baseline decisions, read [references/new-project.md](references/new-project.md). Use an existing generator or Xcode; do not silently install one.
-2. Discover `.xcodeproj` / `.xcworkspace`, shared schemes, package dependencies, test targets/plans, deployment target, Swift language mode, architecture, and CI configuration. Exclude dependency checkouts and generated build output. Prefer existing workspace and CI conventions. If several app schemes are plausible, present the concrete choices and resolve the ambiguity before running expensive checks.
+2. Discover `.xcodeproj` / `.xcworkspace`, shared schemes, package dependencies, test targets/plans, supported platforms, deployment target, Swift language mode, architecture, and CI configuration. Exclude dependency checkouts and generated build output. Prefer existing workspace and CI conventions. If several app schemes are plausible, present the concrete choices and resolve the ambiguity before running expensive checks.
    Confirm named test targets actually exist in the project and are enabled by the active test plan. Missing, orphaned, or skipped references are coverage gaps, even when other tests pass.
-3. Use the selected Xcode toolchain to inspect schemes and available simulator destinations. Record unavailable tools as gaps; do not guess a simulator UUID or raise the deployment target to match a skill's preferences.
+3. Use the selected Xcode toolchain to inspect schemes and available destinations for the actual platform. Record unavailable tools as gaps; do not guess a destination or raise the deployment target to match a skill's preferences.
 4. Create or reconcile `.ios-forge/app.json` using the profile contract in [references/profile.md](references/profile.md). Preserve an existing profile; explain material changes. If the SwiftKeystone CLI is available, its `init` command creates a profile without replacing one. Specialist skill names are routing hints, not proof that a skill is installed.
 5. Identify appropriate baseline checks. If no test target/action exists, record the coverage gap and explicitly agree a build-only baseline rather than silently dropping tests. Invoke `$ios-verify` if available, or follow existing build/test commands and preserve their evidence. Existing failures are baseline findings, not permission for unrelated repairs.
 
 Deliver the selected project/workspace, scheme, destination, relevant versions and conventions, the baseline outcome, and unresolved choices. Keep raw logs and personal paths out of public issues and the shared toolkit. Do not overwrite `AGENTS.md`, install third-party skills, or change signing settings as a side effect of onboarding.
+
+For native macOS destinations, signing prerequisites, and separate UI-test schemes, read
+[references/macos.md](references/macos.md). The legacy `ios-*` name remains for installed-skill compatibility.
