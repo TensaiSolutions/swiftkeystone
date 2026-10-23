@@ -3,37 +3,38 @@
 A reusable development workflow framework for Swift apps with Codex: onboard an app, plan a feature,
 implement a bounded change, and collect honest verification evidence.
 
-**v0.1.0 — foundation preview.** Four installable skills and a dependency-free Python helper.
+**v0.2.0 — foundation preview.** Four installable skills and a dependency-free Python helper.
+See the [v0.2.0 release notes](docs/release-notes-0.2.0.md) for changes and update instructions.
 No account, service, API key, or global configuration change is required by SwiftKeystone itself.
 You use it within your existing Codex environment.
 
 The name reflects the goal: connect planning, implementation, and verification into a dependable
-pattern for Swift app development. **The published v0.1.0 preview was validated on iOS.**
-The current branch adds native macOS workflow guidance; see the validation record for actual results.
+pattern for Swift app development. This preview covers iOS and native macOS workflows;
+see the validation record for the actual environments, pilot corrections, and results.
 Support and validation for additional Apple platforms remain future work.
 
-The project was previously called iOS Forge. For compatibility, v0.1 keeps the `forge.py` entry point,
+The project was previously called iOS Forge. For compatibility, v0.2 keeps the `forge.py` entry point,
 `.ios-forge/app.json` profile, and `$ios-*` skill names. Existing profiles need no migration.
 Updated skill bundles still require manual review when they differ from an installed copy;
 the installer will not overwrite them.
 
-Release archives are named `swiftkeystone-0.1.0.zip`, containing a `swiftkeystone-0.1.0/` directory.
+Release archives are named `swiftkeystone-0.2.0.zip`, containing a `swiftkeystone-0.2.0/` directory.
 
 ## Start here
 
-Download `swiftkeystone-0.1.0.zip` and `swiftkeystone-0.1.0.zip.sha256` from the
-[v0.1.0 release](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.1.0).
+Download `swiftkeystone-0.2.0.zip` and `swiftkeystone-0.2.0.zip.sha256` from the
+[v0.2.0 release](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.2.0).
 Use those named assets, rather than GitHub's automatically generated source archives, for these steps.
 In the download directory on macOS, verify and extract:
 
 ```sh
-shasum -a 256 -c swiftkeystone-0.1.0.zip.sha256
-unzip swiftkeystone-0.1.0.zip
-cd swiftkeystone-0.1.0
+shasum -a 256 -c swiftkeystone-0.2.0.zip.sha256
+unzip swiftkeystone-0.2.0.zip
+cd swiftkeystone-0.2.0
 ```
 
 Stop if the checksum does not match. Keep the extracted directory in a stable location.
-Cloning this repository is an alternative; it gives you the current branch rather than necessarily v0.1.0.
+Cloning this repository is an alternative; it gives you the current branch rather than necessarily v0.2.0.
 Commands below run from that SwiftKeystone directory. Python 3.10+ is required.
 App builds need macOS and full Xcode. iOS simulator runs also need a compatible installed runtime.
 Xcode 16 or newer is required to read test-result summaries.
@@ -47,12 +48,12 @@ python3 forge.py install --app "/path/to/MyApp"
 
 This copies only SwiftKeystone's four skills into the app's `.agents/skills/` directory.
 It preserves `AGENTS.md`, unrelated skills, and global settings. An identical installation is a no-op;
-a differing existing skill stops installation before any copying. Review updates manually in v0.1.
+a differing existing skill stops installation before any copying. Review updates manually in this preview.
 Do not install skills into repositories you do not trust without reading them.
 
 Open your app in Codex and ask:
 
-> Use $ios-onboard to discover this app's configuration and establish a verification baseline. The SwiftKeystone helper is at /absolute/path/to/swiftkeystone-0.1.0/forge.py.
+> Use $ios-onboard to discover this app's configuration and establish a verification baseline. The SwiftKeystone helper is at /absolute/path/to/swiftkeystone-0.2.0/forge.py.
 
 Replace that helper path with the location you extracted. Installation copies skills, not the Python
 helper, into the app. If a skill is not discovered, reopen the app's Codex chat and confirm its
@@ -126,11 +127,11 @@ See [verification and evidence handling](docs/verification.md).
 
 ## Native macOS projects
 
-The current branch's four workflows also cover native macOS projects; the `ios-*` skill names are
+The four workflows also cover native macOS projects; the `ios-*` skill names are
 compatibility aliases. Use an actual Mac scheme and a discovered macOS destination, rather than an
 iOS simulator. See [macOS verification](docs/macos.md) and the
-[example Mac profile](examples/macos-app-profile.json). The released v0.1.0 ZIP does not include this
-new guidance; use a checkout of the current branch until a subsequent release is published.
+[example Mac profile](examples/macos-app-profile.json). Native macOS guidance and the example
+are included starting with v0.2.0; the original v0.1.0 assets remain unchanged.
 
 ## Specialist skills
 
@@ -163,7 +164,7 @@ in Xcode. CI is configured for Linux/macOS and Python 3.10/3.13; the [hosted che
 - No automatic upstream installation/update, uninstall, custom shell commands, archive/export, or test-plan flags.
 - Install preflight prevents known conflicts; it is not a transactional updater and concurrent installations are unsupported.
 - Evidence retention is manual. Logs and test bundles are private until explicitly reviewed for sharing.
-- Validation covers Forge Notes and LaRecette on iOS simulators, plus a native CotEditor macOS pilot on the current branch. The Mac document journey used a desktop UI tool; its XCTest UI runner was blocked. iPhone/iPad hardware and broader compatibility remain outstanding.
+- Validation covers Forge Notes and LaRecette on iOS simulators, plus a native CotEditor macOS pilot. The Mac pilot passed app tests and four XCTest UI cases after explicit local test corrections, including document save/reopen. The earlier automation-startup timeout did not recur; its cause and reboot persistence remain unproven. iPhone/iPad hardware and broader compatibility remain outstanding.
 
 For new projects, follow the [project creation and first-baseline workflow](docs/new-project.md).
 Real-app pilot results and remaining validation limits are recorded in [validation](docs/validation.md).

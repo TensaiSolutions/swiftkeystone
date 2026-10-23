@@ -1,14 +1,16 @@
 # Changelog
 
-## Unreleased
+## 0.2.0 — iOS and macOS foundation preview
 
 - Extend the existing workflow descriptions to native macOS while preserving `ios-*` skill aliases.
 - Add a native macOS profile example and guidance for local signing, document journeys, and separate UI schemes.
 - Report Xcode's failed build step when a failure log has no useful error line.
 - Keep evidence limits applicable to the selected destination rather than implying a Mac test used a simulator.
-
 - Clarify release download/checksum verification, helper location, local schemes, and apps without tests.
 - Explicitly report missing automated-test coverage for build-only profiles.
+- Add macOS XCTest startup and selector troubleshooting based on a native UI pilot.
+- Validate a document open/edit/save/disk-check/terminate/reopen journey with native XCTest.
+- Preserve existing profile paths, skill aliases, conflict-safe installation, and original v0.1.0 assets.
 
 ## 0.1.0 — foundation preview
 

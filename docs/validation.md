@@ -1,6 +1,6 @@
 # SwiftKeystone validation
 
-Validated locally on 2026-10-22 with Xcode 26.6 (17F113), Swift compiler 6.3.3,
+Validated locally on 2026-10-22 and 2026-10-23 with Xcode 26.6 (17F113), Swift compiler 6.3.3,
 Python 3.12.3, and macOS 26.6.2 on Apple silicon. The toolkit v0.1.0 is published on GitHub;
 app pilots are local validation work and have not been submitted to the App Store.
 
@@ -82,15 +82,16 @@ SwiftKeystone distribution files. Simulator results do not establish physical-de
 
 ## Portable checks and limits
 
-All **20 portable tests** passed. Distribution checks passed for four self-contained skill bundles,
+At the original iOS milestone, all **20 portable tests** passed. The v0.2.0 candidate passes **23 portable tests**. Distribution checks passed for four self-contained skill bundles,
 references, example profile, schema syntax, candidate registry, and reproducible archive extraction/installation.
 YAML frontmatter/metadata were parsed with the system Ruby YAML parser; the optional Skill Creator
 Python validator was unavailable because PyYAML was not installed. No dependency was installed to bypass that.
 
 Physical devices, manual VoiceOver, dark mode/full device and text-size coverage, LaRecette on its exact
-minimum runtime, live backend behavior, third-party specialist skill execution, hosted CI, and release
+minimum runtime, live backend behavior, third-party specialist skill execution, and release
 signing/submission remain unvalidated.
-This is evidence for a simulator-tested foundation preview, not universal iOS compatibility.
+Hosted package CI has since passed on Linux/macOS with Python 3.10/3.13; it does not build pilot apps.
+This is evidence for the stated foundation-preview environments, not universal Apple-platform compatibility.
 The companion source archive includes the generated Xcode project and tests, but excludes local profiles,
 Git history, raw logs, result bundles, and application/test data. See docs/new-project.md to repeat the workflow.
 
@@ -102,15 +103,15 @@ and command discovery passed. The app built on an iOS 26.5 simulator destination
 Xcode setting changes. It had no test target: the default build/test baseline correctly failed its test
 action, while an explicitly selected build-only baseline passed.
 
-This exposed unclear first-run guidance and a missing build-only scope reminder. Unreleased fixes
+This exposed unclear first-run guidance and a missing build-only scope reminder. Fixes included in v0.2.0
 clarify download/checksum steps, helper location, scheme portability, and apps without tests; the
 console and JSON now explicitly identify absent automated-test coverage. The updated helper also
-passed the real build-only check. All 21 current portable tests pass. The v0.1.0 assets remain unchanged.
+passed the real build-only check. All 21 portable tests at that milestone passed. The v0.1.0 assets remain unchanged.
 
 This same-agent clean-artifact check is not independent user research, automatic skill-discovery UI
 validation, or behavioral coverage of the app. Private evidence remains outside this repository.
 
-## Native macOS pilot (unreleased)
+## Native macOS pilot (v0.2.0)
 
 A pinned CotEditor 7.0.6 checkout exercised a native macOS destination on the current Apple silicon
 Mac. The original macOS 15 target, Swift settings, Xcode project, dependency lock, and production app
@@ -121,7 +122,7 @@ coverage, not distribution-signing or notarization evidence.
 The initial build correctly stopped at a pinned SwiftLint plugin trust gate. The user explicitly
 approved that plugin/version in Xcode; validation was not disabled. The native app then built, and
 111 existing app tests passed with corrected local test setup. The separate XCTest UI runner failed
-while enabling automation mode, before any app journey executed. That remains an infrastructure gap.
+while enabling automation mode, before any app journey executed. A later follow-up established actual UI coverage as described below.
 
 A desktop UI tool separately demonstrated opening, editing, saving exact file bytes, quitting, and
 relaunching the app with the saved content visible. A pilot document serialization round-trip case
@@ -132,7 +133,35 @@ source fingerprints match, and no production mutation remains.
 
 App test runs used both the helper CLI and explicit native Xcode commands with reused build output;
 private evidence records which method was used. Separate local-package test suites were not all run.
-Unreleased toolkit fixes add macOS workflow scope, bundled guidance and a profile example, and a
-fallback diagnostic from Xcode's failed-build-step summary. All 23 portable tests pass. No result here
-establishes successful XCTest UI automation, other hardware/OS versions, manual VoiceOver, or release
+The v0.2.0 toolkit adds macOS workflow scope, bundled guidance and a profile example, and a
+fallback diagnostic from Xcode's failed-build-step summary. All 23 portable tests pass.
+
+On 2026-10-23 the native XCTest runner successfully started, without an authentication prompt or
+explicit change to global automation/developer policies. The earlier timeout did not recur; the cause
+and authorization behavior after reboot remain unproven. A focused upstream typing test reached UI
+actions but its first-window query could resolve to another window after closing the intended one.
+A local correction checks the window-count decrease. A new document journey initially matched a
+Touch Bar Open control; targeting the native dialog button identifier corrected that selector.
+
+With those explicit local test corrections, the complete UI scheme passed **4 tests, 0 failures,
+0 skipped**: launch performance, Settings panes, typing/window close, and document open/edit/save,
+exact on-disk content verification, termination, relaunch, and reopen. The original upstream UI suite
+did not pass unchanged. Production document code remains byte-for-byte upstream. Raw logs, result
+bundles, fixture files, and pilot patches remain outside the distribution.
+
+This establishes native XCTest UI coverage on the current Mac, separately from the earlier desktop UI
+tool observation. It does not establish other hardware/OS versions, manual VoiceOver, or release
 signing/submission. The published v0.1.0 archive remains unchanged.
+
+## v0.2.0 release-candidate package check
+
+A locally built v0.2.0 ZIP passed checksum verification, allowlist inspection, and clean extraction
+outside the source checkout. From that extracted helper, separate iOS and macOS fixture profiles
+passed installation preview, first/repeated installation, profile creation/validation, and verification
+command previews. Existing profiles, instructions, and deliberately customized installed skills were
+preserved; conflicting installation and repeated profile creation were refused as expected.
+
+These were portable adoption checks against fixture project directories, not Xcode app builds,
+independent user research, or a download of a published v0.2.0 asset. The native app/UI results above
+remain separate evidence. Publication requires rebuilding from the reviewed merged commit and
+checking the actual downloaded assets afterward.
