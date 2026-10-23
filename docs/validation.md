@@ -1,7 +1,7 @@
 # SwiftKeystone validation
 
 Validated locally on 2026-10-22 and 2026-10-23 with Xcode 26.6 (17F113), Swift compiler 6.3.3,
-Python 3.12.3, and macOS 26.6.2 on Apple silicon. The toolkit v0.1.0 is published on GitHub;
+Python 3.12.3, and macOS 26.6.2 on Apple silicon. The toolkit v0.1.0/v0.2.0 previews are published on GitHub;
 app pilots are local validation work and have not been submitted to the App Store.
 
 ## New app: Forge Notes
@@ -165,3 +165,32 @@ These were portable adoption checks against fixture project directories, not Xco
 independent user research, or a download of a published v0.2.0 asset. The native app/UI results above
 remain separate evidence. Publication requires rebuilding from the reviewed merged commit and
 checking the actual downloaded assets afterward.
+
+## v0.3.0 candidate: baseline, evidence, and skill upgrade
+
+The candidate's portable tests cover static target/plan selection, stale evidence, malformed or
+contradictory reports, privacy-bounded summaries, and three-way update staging with local edits,
+conflicts, file removals, permission modes, and link/output guards. Extracted-package tests exercise
+new commands and installed references without access to the source checkout.
+
+The existing LaRecette v0.2.0 installation was upgraded locally using an extracted v0.3.0 candidate.
+Preview and staging left the app untouched; installed originals were archived explicitly before the
+reviewed incoming files were installed into vacant destinations. The profile and Git-visible app source
+were unchanged, all installed references resolved, and manual rollback/re-activation reproduced both
+versions' file inventories. A separate customized-installation fixture retained a local conflict and an
+extra local resource without replacing installed files. This is reviewed staging with manual activation,
+not an automatic in-place updater.
+
+The static audit flagged the actual original orphaned/disabled UI-test reference, resolved both targets
+in the current default plan, and distinguished a new commit with matching source/profile contents from
+changed evidence. New comparison/summary commands also processed the existing v0.2.0 passing,
+failing, and restored native reports, preserving the check-selection and legacy-context qualifications.
+No new deliberate app regression was needed for those report comparisons.
+
+Separately, the extracted v0.3.0 helper built LaRecette and ran **23 native tests, 0 failures, 0 skipped**
+on the existing iOS 26.5 simulator with Xcode 26.6. Its report records a clean source tree, the new helper
+version, and an explicit configuration snapshot. Comparing old/new native reports confirmed unchanged
+source/profile hashes and matching test context. Raw evidence and app-specific fixtures remain outside
+this repository. This same-agent local pilot does not establish independent user adoption, hosted app
+CI, new macOS-native coverage, physical devices, minimum-runtime behavior, or distribution signing.
+The v0.3.0 candidate is not a published release; original v0.1.0/v0.2.0 assets remain unchanged.

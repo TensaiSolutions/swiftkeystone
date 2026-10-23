@@ -17,3 +17,8 @@ Deliver the selected project/workspace, scheme, destination, relevant versions a
 
 For native macOS destinations, signing prerequisites, and separate UI-test schemes, read
 [references/macos.md](references/macos.md). The legacy `ios-*` name remains for installed-skill compatibility.
+
+When the helper is available, use its static `audit` to inspect baseline wiring and earlier-evidence freshness;
+read [references/baseline-audit.md](references/baseline-audit.md). This does not replace native verification.
+For an existing installation upgrade, read [references/skill-updates.md](references/skill-updates.md);
+preview and stage changes before explicit activation, preserving originals and customizations.

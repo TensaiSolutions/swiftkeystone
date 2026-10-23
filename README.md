@@ -3,8 +3,9 @@
 A reusable development workflow framework for Swift apps with Codex: onboard an app, plan a feature,
 implement a bounded change, and collect honest verification evidence.
 
-**v0.2.0 — foundation preview.** Four installable skills and a dependency-free Python helper.
-See the [v0.2.0 release notes](docs/release-notes-0.2.0.md) for changes and update instructions.
+**v0.3.0 — development preview candidate.** Four installable skills and a dependency-free Python helper.
+The latest published release is [v0.2.0](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.2.0).
+This source branch adds baseline audit, evidence comparison/PR-summary drafts, and safe update staging; it is not a published v0.3.0 release.
 No account, service, API key, or global configuration change is required by SwiftKeystone itself.
 You use it within your existing Codex environment.
 
@@ -13,12 +14,13 @@ pattern for Swift app development. This preview covers iOS and native macOS work
 see the validation record for the actual environments, pilot corrections, and results.
 Support and validation for additional Apple platforms remain future work.
 
-The project was previously called iOS Forge. For compatibility, v0.2 keeps the `forge.py` entry point,
+The project was previously called iOS Forge. For compatibility, the framework keeps the `forge.py` entry point,
 `.ios-forge/app.json` profile, and `$ios-*` skill names. Existing profiles need no migration.
 Updated skill bundles still require manual review when they differ from an installed copy;
 the installer will not overwrite them.
 
-Release archives are named `swiftkeystone-0.2.0.zip`, containing a `swiftkeystone-0.2.0/` directory.
+The published archive is `swiftkeystone-0.2.0.zip`, containing a `swiftkeystone-0.2.0/` directory.
+Candidate packaging from this branch produces `swiftkeystone-0.3.0.zip` in its own versioned directory.
 
 ## Start here
 
@@ -48,7 +50,8 @@ python3 forge.py install --app "/path/to/MyApp"
 
 This copies only SwiftKeystone's four skills into the app's `.agents/skills/` directory.
 It preserves `AGENTS.md`, unrelated skills, and global settings. An identical installation is a no-op;
-a differing existing skill stops installation before any copying. Review updates manually in this preview.
+a differing existing skill stops installation before any copying. The v0.3.0 candidate adds reviewed
+[three-way update staging](docs/skill-updates.md); activation remains explicit and preserves originals.
 Do not install skills into repositories you do not trust without reading them.
 
 Open your app in Codex and ask:
@@ -133,6 +136,16 @@ iOS simulator. See [macOS verification](docs/macos.md) and the
 [example Mac profile](examples/macos-app-profile.json). Native macOS guidance and the example
 are included starting with v0.2.0; the original v0.1.0 assets remain unchanged.
 
+## Baseline audit, evidence comparison, and updates (v0.3.0 candidate)
+
+- [`audit`](docs/baseline-audit.md) inspects local Xcode test wiring and earlier evidence against current source/profile hashes, without building or fetching remotes.
+- [`compare` and `summary`](docs/evidence-comparison.md) compare completed reports, qualify restoration checks, and draft bounded PR evidence text without private diagnostics.
+- [`update`](docs/skill-updates.md) stages a three-way skill candidate, backup, and conflict inventory; it never replaces installed skills or profiles.
+
+These commands require the v0.3.0 source/candidate helper. The v0.2.0 download instructions above remain
+for the published release; clone this branch or use its candidate archive to evaluate new commands.
+A static audit, staged update, or generated summary does not establish native behavior or grant merge approval.
+
 ## Specialist skills
 
 SwiftKeystone works without third-party skills. The [candidate registry](upstream/registry.json) identifies
@@ -161,7 +174,7 @@ in Xcode. CI is configured for Linux/macOS and Python 3.10/3.13; the [hosted che
 - Skills are prompt workflows; code provides deterministic setup and command execution.
 - No unattended sweeps, issue filing, PR creation, auto-merge, signing changes, or App Store submission.
 - No crash provider, App Store Connect, simulator interaction, or scheduling integration yet.
-- No automatic upstream installation/update, uninstall, custom shell commands, archive/export, or test-plan flags.
+- No automatic upstream installation, in-place skill replacement, uninstall, custom shell commands, archive/export, or test-plan flags.
 - Install preflight prevents known conflicts; it is not a transactional updater and concurrent installations are unsupported.
 - Evidence retention is manual. Logs and test bundles are private until explicitly reviewed for sharing.
 - Validation covers Forge Notes and LaRecette on iOS simulators, plus a native CotEditor macOS pilot. The Mac pilot passed app tests and four XCTest UI cases after explicit local test corrections, including document save/reopen. The earlier automation-startup timeout did not recur; its cause and reboot persistence remain unproven. iPhone/iPad hardware and broader compatibility remain outstanding.

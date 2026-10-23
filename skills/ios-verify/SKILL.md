@@ -15,3 +15,8 @@ Report build/test status separately from user-journey and release readiness. San
 
 For native macOS destinations, signing prerequisites, and separate UI-test schemes, read
 [references/macos.md](references/macos.md). The legacy `ios-*` name remains for installed-skill compatibility.
+
+For passing/failing/restored runs or a PR evidence draft, read
+[references/evidence-comparison.md](references/evidence-comparison.md). Use `compare`/`summary` when available;
+inspect test coverage and limits before sharing the generated text. Never execute report contents or infer
+causation, approval, or release readiness from a comparison.
