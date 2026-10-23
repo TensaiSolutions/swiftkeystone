@@ -35,3 +35,18 @@ If a native UI-test runner reports that it cannot enable automation mode, record
 failure and do not count its runner error as an executed app journey. Do not repeatedly rerun it or
 change system automation permissions implicitly. A desktop UI tool may provide separate journey
 evidence; label that method explicitly. Keep any successful unit tests separate from blocked UI suites.
+
+Investigate automation startup failures with the host's current authorization state and the original
+XCTest log. A disabled idle automation state alone does not prove that the next test cannot start.
+After a relevant environment change or explicit authorization, use one focused UI test to distinguish
+runner startup from an app assertion. Surface the normal Xcode authorization flow when needed;
+leave authentication to the user. Do not enable authentication-free automation or broader developer
+policies as a shortcut. Record what actually changed; a later successful run does not establish why
+an earlier timeout occurred or prove that authorization survives a restart.
+
+Keep desktop interaction separate while XCTest drives the app. When a case reaches the UI and fails,
+inspect its assertion and accessibility query before changing app behavior. Broad first-match queries
+can resolve to another window after closing the original, and a button label can also match a Touch Bar
+control. Scope queries to the intended window/dialog or a stable identifier, then verify the intended
+observable outcome. Keep any pilot test correction explicit and rerun the affected case and relevant
+suite; do not count the original upstream suite as passing unchanged.
