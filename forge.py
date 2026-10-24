@@ -331,6 +331,10 @@ def summary_command(args):
 
 
 def main(argv=None):
+    if sys.version_info < (3, 10):
+        print("swiftkeystone: Python 3.10+ is required. Select a supported interpreter; "
+              "macOS /usr/bin/python3 may be older. Nothing was changed.", file=sys.stderr)
+        return 2
     parser = argparse.ArgumentParser(description=__doc__)
     parser.add_argument("--version", action="version", version=VERSION)
     sub = parser.add_subparsers(dest="command", required=True)

@@ -3,9 +3,9 @@
 A reusable development workflow framework for Swift apps with Codex: onboard an app, plan a feature,
 implement a bounded change, and collect honest verification evidence.
 
-**v0.3.0 — development preview candidate.** Four installable skills and a dependency-free Python helper.
-The latest published release is [v0.2.0](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.2.0).
-This source branch adds baseline audit, evidence comparison/PR-summary drafts, and safe update staging; it is not a published v0.3.0 release.
+**v0.3.0 — Adoption and Evidence Preview.** Four installable skills and a dependency-free Python helper.
+The latest published release is [v0.3.0](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.3.0).
+It includes baseline audit, evidence comparison/PR-summary drafts, and safe update staging.
 No account, service, API key, or global configuration change is required by SwiftKeystone itself.
 You use it within your existing Codex environment.
 
@@ -19,25 +19,29 @@ The project was previously called iOS Forge. For compatibility, the framework ke
 Updated skill bundles still require manual review when they differ from an installed copy;
 the installer will not overwrite them.
 
-The published archive is `swiftkeystone-0.2.0.zip`, containing a `swiftkeystone-0.2.0/` directory.
-Candidate packaging from this branch produces `swiftkeystone-0.3.0.zip` in its own versioned directory.
+The published archive is `swiftkeystone-0.3.0.zip`, containing a `swiftkeystone-0.3.0/` directory.
 
 ## Start here
 
-Download `swiftkeystone-0.2.0.zip` and `swiftkeystone-0.2.0.zip.sha256` from the
-[v0.2.0 release](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.2.0).
+Download `swiftkeystone-0.3.0.zip` and `swiftkeystone-0.3.0.zip.sha256` from the
+[v0.3.0 release](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.3.0).
 Use those named assets, rather than GitHub's automatically generated source archives, for these steps.
 In the download directory on macOS, verify and extract:
 
 ```sh
-shasum -a 256 -c swiftkeystone-0.2.0.zip.sha256
-unzip swiftkeystone-0.2.0.zip
-cd swiftkeystone-0.2.0
+shasum -a 256 -c swiftkeystone-0.3.0.zip.sha256
+unzip swiftkeystone-0.3.0.zip
+cd swiftkeystone-0.3.0
 ```
 
 Stop if the checksum does not match. Keep the extracted directory in a stable location.
-Cloning this repository is an alternative; it gives you the current branch rather than necessarily v0.2.0.
+Cloning this repository is an alternative; it gives you the current branch rather than necessarily v0.3.0.
 Commands below run from that SwiftKeystone directory. Python 3.10+ is required.
+Check `python3 --version` before setup. macOS `/usr/bin/python3` may be older; select an
+already installed Python 3.10+ interpreter and use that same executable for every command below.
+If none is installed, stop and arrange installation explicitly. SwiftKeystone does not install Python
+or change your system interpreter. The original v0.3.0 helper does not enforce this minimum at startup;
+the development helper now rejects older interpreters before dispatching commands.
 App builds need macOS and full Xcode. iOS simulator runs also need a compatible installed runtime.
 Xcode 16 or newer is required to read test-result summaries.
 
@@ -50,13 +54,13 @@ python3 forge.py install --app "/path/to/MyApp"
 
 This copies only SwiftKeystone's four skills into the app's `.agents/skills/` directory.
 It preserves `AGENTS.md`, unrelated skills, and global settings. An identical installation is a no-op;
-a differing existing skill stops installation before any copying. The v0.3.0 candidate adds reviewed
+a differing existing skill stops installation before any copying. v0.3.0 includes reviewed
 [three-way update staging](docs/skill-updates.md); activation remains explicit and preserves originals.
 Do not install skills into repositories you do not trust without reading them.
 
 Open your app in Codex and ask:
 
-> Use $ios-onboard to discover this app's configuration and establish a verification baseline. The SwiftKeystone helper is at /absolute/path/to/swiftkeystone-0.2.0/forge.py.
+> Use $ios-onboard to discover this app's configuration and establish a verification baseline. The SwiftKeystone helper is at /absolute/path/to/swiftkeystone-0.3.0/forge.py.
 
 Replace that helper path with the location you extracted. Installation copies skills, not the Python
 helper, into the app. If a skill is not discovered, reopen the app's Codex chat and confirm its
@@ -89,6 +93,22 @@ from a profile to hide failures. Add or restore tests as a separate, scoped task
 
 The profile contains a machine-specific destination. Review your app's ignore policy before committing
 it; the installer does not edit `.gitignore`. Installed skills may be committed for the team or kept local.
+
+### Permissions and baseline scope
+
+Codex may require normal approval to write project-local `.agents/skills/` or access Xcode and
+CoreSimulator beyond its sandbox. If installation reports `Operation not permitted`, use the normal
+approval flow for that scoped write. Simulator discovery can exit successfully while its output reports
+CoreSimulator connection or permission errors and lists only placeholder destinations. Treat that output
+as blocked discovery; retry with normal approved Xcode access before choosing an actual available device.
+Do not disable sandboxing, plugin validation, or authentication, or change global settings to get past it.
+
+Compare the selected scheme's enabled tests with the app's documented CI command. This preview cannot
+express `-only-testing`, custom configurations, or arbitrary build-setting overrides. A full-scheme local
+baseline can therefore include tests that CI excludes; record that difference instead of claiming CI parity
+or silently dropping tests. A baseline failure is a finding, not permission to rewrite the app or tests.
+The `summary` command can successfully generate text for a failed run; inspect its reported status and
+counts rather than treating summary exit code 0 as a passing verification.
 
 ## Everyday workflow
 
@@ -136,14 +156,14 @@ iOS simulator. See [macOS verification](docs/macos.md) and the
 [example Mac profile](examples/macos-app-profile.json). Native macOS guidance and the example
 are included starting with v0.2.0; the original v0.1.0 assets remain unchanged.
 
-## Baseline audit, evidence comparison, and updates (v0.3.0 candidate)
+## Baseline audit, evidence comparison, and updates (v0.3.0)
 
 - [`audit`](docs/baseline-audit.md) inspects local Xcode test wiring and earlier evidence against current source/profile hashes, without building or fetching remotes.
 - [`compare` and `summary`](docs/evidence-comparison.md) compare completed reports, qualify restoration checks, and draft bounded PR evidence text without private diagnostics.
 - [`update`](docs/skill-updates.md) stages a three-way skill candidate, backup, and conflict inventory; it never replaces installed skills or profiles.
 
-These commands require the v0.3.0 source/candidate helper. The v0.2.0 download instructions above remain
-for the published release; clone this branch or use its candidate archive to evaluate new commands.
+These commands are included in the published v0.3.0 helper. Use the verified download above;
+installation copies skills into the app, while these commands run from the extracted distribution.
 A static audit, staged update, or generated summary does not establish native behavior or grant merge approval.
 
 ## Specialist skills
