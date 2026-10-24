@@ -1,6 +1,12 @@
 # Changelog
 
-## 0.3.0 — unreleased adoption and evidence preview
+## Unreleased
+
+- Correct published-release adoption instructions to use v0.3.0, and check download/helper version consistency during packaging.
+- Reject Python versions below 3.10 before command dispatch; explain interpreter selection, normal sandbox approvals, and local-scheme versus CI coverage.
+- Record fresh-session adoption against an existing app, including an honestly failed native UI baseline.
+
+## 0.3.0 — adoption and evidence preview
 
 - Add a portable static audit of project/workspace targets, scheme/default-plan wiring, local tracking state, and earlier source/profile evidence.
 - Compare completed v0.2/v0.3 reports and detected-failure/restoration inputs; draft bounded PR verification summaries without private diagnostics.

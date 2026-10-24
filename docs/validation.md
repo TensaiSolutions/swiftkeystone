@@ -193,4 +193,38 @@ version, and an explicit configuration snapshot. Comparing old/new native report
 source/profile hashes and matching test context. Raw evidence and app-specific fixtures remain outside
 this repository. This same-agent local pilot does not establish independent user adoption, hosted app
 CI, new macOS-native coverage, physical devices, minimum-runtime behavior, or distribution signing.
-The v0.3.0 candidate is not a published release; original v0.1.0/v0.2.0 assets remain unchanged.
+The candidate was subsequently published as v0.3.0 from merged main; original v0.1.0/v0.2.0 assets remain unchanged.
+
+
+## Published v0.3.0 clean-download adoption (2026-10-24)
+
+The public v0.3.0 ZIP and checksum were downloaded again and verified in a new private directory.
+A fresh ephemeral Codex session, without this development conversation, used only the published
+bundle and an isolated existing SwiftUI/SpriteKit app checkout. It read the installed onboarding
+instructions explicitly; automatic skill discovery in a newly opened desktop chat was not tested.
+The app already had a shared scheme, unit tests, UI tests, and unrelated Spec Kit skills.
+
+The published helper completed installation preview, installation, configuration discovery, profile
+validation, static audit, verification preview, and native build/test execution. Repeat installation
+was a no-op, and repeated profile creation was refused. The tracked app source and existing unrelated
+skills were preserved. Local adoption files made the checkout dirty; a passing build is not evidence
+of a clean Git tree. Raw reports, source fingerprints, diagnostics, and machine-specific paths remain private.
+
+On Xcode 26.6 and an iOS 26.5 simulator, the native build passed and the complete scheme recorded
+**52 passed tests, 1 failed, 0 skipped**. The helper returned failure and retained structured evidence;
+a bounded summary also reported the failed baseline. The existing UI test failed while waiting for
+its win-results screen. One run does not distinguish product behavior from test timing, and no app
+source or test was changed to produce a green baseline. This is successful execution/reporting of the
+adoption workflow with an unresolved app baseline finding, not a claim that the app's tests all pass.
+
+The published README still directed users to v0.2.0 and called v0.3.0 unpublished. The fresh session
+was explicitly asked to test v0.3.0 and continue with that bundle while recording the contradiction;
+it therefore does not establish unaided success from the original README. Development documentation
+now points to v0.3.0, and distribution checks reject mismatched adoption download, extraction, release,
+and helper versions. Regression tests reproduce stale instructions, and the corrected development
+package passes extracted distribution checks. An additional startup guard rejects Python below 3.10;
+the actual system Python 3.9 was refused without writes, while Python 3.12 installed all four skills in a
+separate fixture. Setup guidance also explains normal sandbox approvals, misleading simulator discovery,
+and full-scheme versus CI coverage. All **51 portable tests** pass. Native execution above used the
+published helper; it was not repeated after this startup-only guard. These changes do not replace the immutable published
+ZIP or establish adoption of a future release. No new macOS-native or physical-device validation was run.

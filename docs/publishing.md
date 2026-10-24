@@ -1,8 +1,15 @@
 # Publish SwiftKeystone on GitHub
 
 Repository: [TensaiSolutions/swiftkeystone](https://github.com/TensaiSolutions/swiftkeystone), public.
-The v0.1.0 and v0.2.0 foundation previews are published. Keep their tags, ZIPs, and checksums unchanged.
-The next candidate is **v0.3.0 — Adoption and Evidence Preview**, still unreleased.
+The v0.1.0, v0.2.0, and **v0.3.0 — Adoption and Evidence Preview** releases are published.
+Keep their tags, ZIPs, and checksums unchanged. The checklist below records the v0.3.0 procedure;
+substitute the intended version when preparing a future release.
+
+Before merging release preparation, make the README download, extraction, helper-path, and command
+availability guidance match the intended version. Run the distribution checks against the extracted
+archive as well as the source. Recheck those instructions after publication; do not leave the new release
+described as unpublished. Published archives are immutable: documentation corrections ship in a new
+release, with a correction linked from the affected release notes.
 
 The package scripts create local artifacts only. Preparing a release does not publish it or create a tag.
 

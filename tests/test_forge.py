@@ -67,6 +67,15 @@ class ForgeTests(unittest.TestCase):
         self.assertFalse((self.app / "AGENTS.md").exists())
         self.assertFalse((self.app / ".agents").exists())
 
+    def test_unsupported_python_stops_before_installation_or_argument_dispatch(self):
+        before = self.profile.read_bytes()
+        with patch("forge.sys.version_info", (3, 9, 6)):
+            code, _, error = self.call("install", "--app", str(self.app))
+        self.assertEqual(code, 2)
+        self.assertIn("Python 3.10+ is required", error)
+        self.assertFalse((self.app / ".agents").exists())
+        self.assertEqual(self.profile.read_bytes(), before)
+
     def test_init_rejects_invalid_input_without_creating_profile(self):
         self.profile.unlink()
         code, _, _ = self.call("init", "--app", str(self.app), "--name", "Other", "--project", "../Other.xcodeproj",

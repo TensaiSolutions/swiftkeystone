@@ -10,8 +10,24 @@ sys.path.insert(0, str(ROOT))
 import forge
 
 
-def main():
+def readme_errors(text, version):
+    """Keep the adoption entry point aligned with the helper being packaged."""
     errors = []
+    start = text.split("## Start here\n", 1)
+    if len(start) != 2:
+        return ["README: missing adoption entry point"]
+    adoption = start[1].split("## Everyday workflow", 1)[0]
+    versions = re.findall(r"swiftkeystone-(\d+\.\d+\.\d+)", adoption)
+    release_versions = re.findall(r"/releases/tag/v(\d+\.\d+\.\d+)", adoption)
+    if not versions or any(value != version for value in versions + release_versions):
+        errors.append("README: download, extraction, and helper paths must match the packaged version")
+    if f"swiftkeystone-{version}.zip.sha256" not in adoption or not release_versions:
+        errors.append("README: missing versioned release/checksum instructions")
+    return errors
+
+
+def main():
+    errors = readme_errors((ROOT / "README.md").read_text(), forge.VERSION)
     for name in forge.SKILLS:
         directory = ROOT / "skills" / name
         text = (directory / "SKILL.md").read_text()
