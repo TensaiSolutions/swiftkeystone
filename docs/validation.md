@@ -228,3 +228,42 @@ separate fixture. Setup guidance also explains normal sandbox approvals, mislead
 and full-scheme versus CI coverage. All **51 portable tests** pass. Native execution above used the
 published helper; it was not repeated after this startup-only guard. These changes do not replace the immutable published
 ZIP or establish adoption of a future release. No new macOS-native or physical-device validation was run.
+
+
+## Native macOS feature pilot (2026-10-25)
+
+An isolated CotEditor 7.0.6 checkout used the verified published v0.3.0 helper and installed workflows
+for a bounded Sort by Pattern feature: optionally ignore surrounding ASCII spaces/tabs in comparison
+keys, defaulting off and preserving the original document text and line endings. The original macOS 15
+target, Swift settings and app dependency lock were preserved. The feature and tests are reviewed in a
+separate fork PR; app source, profiles, setup patches, logs and result bundles are not distributed here.
+
+With the earlier scoped ad-hoc signing and test-entitlement corrections, the refreshed baseline passed
+**111 app tests**, **9 LineSort package tests**, and **3 native UI tests**. The existing window-close
+query correction remains an explicit separate test commit. Neither the original upstream test setup nor
+its UI suite is represented as passing unchanged. Standalone package tests were pinned to the app's
+reviewed build-plugin version after an unpinned resolution selected a newer version; that attempt was
+interrupted rather than treated as permission to execute a different plugin.
+
+The expanded LineSort suite passed **12 tests**. The full native UI suite passed **4 tests** through
+the published helper, including checkbox default/on state, sorting, Undo, exact saved bytes, termination
+and reopen. A temporary bypass of comparison-key normalization caused two package assertions and
+the new UI sorting assertion to fail; the helper reported **3 UI passes and 1 failure**. Restoring exact
+source bytes returned the package suite and all four UI tests to passing; the final app suite also passed
+all 111 tests. Comparison of the helper's
+passing/failing/restored reports verified matching restored source/profile inputs and comparable
+configuration. This is recorded execution plus deliberate mutation, not independent adoption or a claim
+that comparison alone proves causality or test coverage. The original app profile was archived before
+creating a separate UI profile in its vacant location, then restored; app and UI evidence retain their distinct scopes.
+
+UI testing exposed an empty menu accessibility title and sheet-resize timing; queries now use an
+observed contained menu command and wait for layout/state changes. An app-level screenshot captured
+the primary display while the app was on another monitor. Corrected window/sheet attachments were
+exported and inspected; only those show the intended UI. Assertions and on-disk checks establish the
+journey, independently of the screenshots. The bundled macOS reference now includes these lessons.
+
+These results use Xcode 26.6 on the current Apple silicon Mac, with local configuration differences
+recorded and excluded from the feature PR. No global policy changes, plugin-validation bypass, upstream
+submission, non-English layout certification, other hardware/macOS validation, manual accessibility,
+release signing or notarization are claimed. SwiftKeystone's installed v0.3.0 skills and published assets
+were preserved; updated guidance is development work for a future release.

@@ -30,6 +30,11 @@ as distinct evidence. A run on the current Mac does not establish other macOS ve
 Package resolution and first builds can take longer than incremental builds. Retain the private log,
 report stalled or failed resolution as an environment baseline finding, and preserve pinned dependencies.
 Do not repeatedly rebuild or change dependency versions merely to obtain a passing baseline.
+A standalone `swift test` package can resolve a different build-plugin version from the app workspace
+when it lacks its own lockfile. Inspect both resolutions before running it; preserve the app's reviewed
+pin for the pilot and retain the standalone lockfile privately when repository policy excludes it.
+Use resolved-version enforcement when supported. An earlier trust approval for one plugin version
+does not approve another version, and a package-only baseline does not establish native app coverage.
 
 If a native UI-test runner reports that it cannot enable automation mode, record an infrastructure
 failure and do not count its runner error as an executed app journey. Do not repeatedly rerun it or
@@ -50,3 +55,14 @@ can resolve to another window after closing the original, and a button label can
 control. Scope queries to the intended window/dialog or a stable identifier, then verify the intended
 observable outcome. Keep any pilot test correction explicit and rerun the affected case and relevant
 suite; do not count the original upstream suite as passing unchanged.
+
+
+SwiftUI sheets can resize when controls change. Wait for the selected state and layout to settle before
+clicking a control whose position moved, and verify its resulting value. If a menu has an empty
+accessibility title, inspect the captured hierarchy and use a meaningful contained item to identify it;
+prefer that semantic query over screen coordinates, and do not infer an app defect from a failed label query.
+
+For screenshot attachments, target the intended document window or sheet and inspect the exported
+image. App-level captures on a multi-display Mac can show the primary display rather than the tested
+window. A named attachment is not evidence that its pixels show the intended app. Keep incidental
+content from other apps private; use assertions and on-disk checks as the authority for behavior.

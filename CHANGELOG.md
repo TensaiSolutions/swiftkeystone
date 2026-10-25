@@ -2,6 +2,8 @@
 
 ## Unreleased
 
+- Clarify separate package dependency pins, animated native UI queries, and inspected window-scoped screenshots from the macOS feature pilot.
+
 - Correct published-release adoption instructions to use v0.3.0, and check download/helper version consistency during packaging.
 - Reject Python versions below 3.10 before command dispatch; explain interpreter selection, normal sandbox approvals, and local-scheme versus CI coverage.
 - Record fresh-session adoption against an existing app, including an honestly failed native UI baseline.
