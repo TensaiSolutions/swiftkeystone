@@ -54,7 +54,7 @@ class ForgeTests(unittest.TestCase):
     def test_baseline_gate_fails_successful_xcode_when_execution_is_insufficient(self):
         self.data["baseline_expectations"] = {"minimum_executed_tests": 2}
         self.save()
-        with self.fake_xcode("sys.exit(0)"):
+        with self.fake_xcode("sys.exit(0)"), patch("forge.platform.system", return_value="Darwin"):
             code, _, _ = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
         self.assertEqual(code, 1)
         check = self.report()["checks"][-1]
@@ -65,7 +65,7 @@ class ForgeTests(unittest.TestCase):
     def test_baseline_gate_requires_actual_target_execution(self):
         self.data["baseline_expectations"] = {"required_test_targets": ["Unit", "UI"]}
         self.save()
-        with self.fake_xcode("sys.exit(0)"), patch("forge.read_test_targets", return_value={"executed_by_target": {"Unit": 1}}):
+        with self.fake_xcode("sys.exit(0)"), patch("forge.platform.system", return_value="Darwin"), patch("forge.read_test_targets", return_value={"executed_by_target": {"Unit": 1}}):
             code, _, _ = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
         self.assertEqual(code, 1)
         self.assertEqual(self.report()["checks"][-1]["baseline_assessment"]["missing_test_targets"], ["UI"])
@@ -73,7 +73,7 @@ class ForgeTests(unittest.TestCase):
     def test_baseline_gate_accepts_matching_runtime_counts_and_targets(self):
         self.data["baseline_expectations"] = {"required_test_targets": ["Unit"], "minimum_executed_tests": 1}
         self.save()
-        with self.fake_xcode("sys.exit(0)"), patch("forge.read_test_targets", return_value={"executed_by_target": {"Unit": 1}}):
+        with self.fake_xcode("sys.exit(0)"), patch("forge.platform.system", return_value="Darwin"), patch("forge.read_test_targets", return_value={"executed_by_target": {"Unit": 1}}):
             code, _, _ = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
         self.assertEqual(code, 0)
         self.assertEqual(self.report()["checks"][-1]["baseline_assessment"]["status"], "passed")
@@ -82,7 +82,7 @@ class ForgeTests(unittest.TestCase):
         self.data["checks"] = ["test"]
         self.data["baseline_expectations"] = {"minimum_executed_tests": 2}
         self.save()
-        with self.fake_xcode("print('error: native compile failure'); sys.exit(65)"):
+        with self.fake_xcode("print('error: native compile failure'); sys.exit(65)"), patch("forge.platform.system", return_value="Darwin"):
             code, _, _ = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
         self.assertEqual(code, 1)
         self.assertIn("native compile failure", self.report()["checks"][0]["diagnostic"])
