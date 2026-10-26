@@ -57,6 +57,13 @@ class PackageTests(unittest.TestCase):
                                     "--output-dir", str(root / "staging"), "--dry-run"]))
             self.assertEqual(result["conflicts"], 0)
             self.assertFalse((root / "staging").exists())
+            profile = app / ".ios-forge/app.json"
+            profile.parent.mkdir()
+            profile.write_text(json.dumps({"schema_version": 1, "name": "Fixture", "project": "App.xcodeproj",
+                "scheme": "App", "destination": "platform=macOS", "checks": ["test"], "timeout_seconds": 30,
+                "baseline_expectations": {"minimum_executed_tests": 1, "required_test_targets": ["Unit"]}}))
+            self.assertIn("Profile is valid", run(["validate", str(profile)]))
+
             report = root / "report.json"
             report.write_text(json.dumps({"status": "passed", "checks": [
                 {"name": "build", "status": "passed", "exit_code": 0}]}))

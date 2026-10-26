@@ -51,6 +51,54 @@ class ForgeTests(unittest.TestCase):
     def report(self):
         return json.loads(next(self.output.glob("*/report.json")).read_text())
 
+    def test_baseline_gate_fails_successful_xcode_when_execution_is_insufficient(self):
+        self.data["baseline_expectations"] = {"minimum_executed_tests": 2}
+        self.save()
+        with self.fake_xcode("sys.exit(0)"):
+            code, _, _ = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
+        self.assertEqual(code, 1)
+        check = self.report()["checks"][-1]
+        self.assertEqual(check["exit_code"], 0)
+        self.assertEqual(check["baseline_assessment"]["executed_tests"], 1)
+        self.assertEqual(check["status"], "failed")
+
+    def test_baseline_gate_requires_actual_target_execution(self):
+        self.data["baseline_expectations"] = {"required_test_targets": ["Unit", "UI"]}
+        self.save()
+        with self.fake_xcode("sys.exit(0)"), patch("forge.read_test_targets", return_value={"executed_by_target": {"Unit": 1}}):
+            code, _, _ = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
+        self.assertEqual(code, 1)
+        self.assertEqual(self.report()["checks"][-1]["baseline_assessment"]["missing_test_targets"], ["UI"])
+
+    def test_baseline_gate_accepts_matching_runtime_counts_and_targets(self):
+        self.data["baseline_expectations"] = {"required_test_targets": ["Unit"], "minimum_executed_tests": 1}
+        self.save()
+        with self.fake_xcode("sys.exit(0)"), patch("forge.read_test_targets", return_value={"executed_by_target": {"Unit": 1}}):
+            code, _, _ = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
+        self.assertEqual(code, 0)
+        self.assertEqual(self.report()["checks"][-1]["baseline_assessment"]["status"], "passed")
+
+    def test_baseline_gate_preserves_native_failure_diagnostic(self):
+        self.data["checks"] = ["test"]
+        self.data["baseline_expectations"] = {"minimum_executed_tests": 2}
+        self.save()
+        with self.fake_xcode("print('error: native compile failure'); sys.exit(65)"):
+            code, _, _ = self.call("verify", "--app", str(self.app), "--output-dir", str(self.output))
+        self.assertEqual(code, 1)
+        self.assertIn("native compile failure", self.report()["checks"][0]["diagnostic"])
+
+    def test_profile_validation_rejects_invalid_or_build_only_expectations(self):
+        for value in ({"minimum_executed_tests": True}, {"required_test_targets": ["Unit", "Unit"]}, {}):
+            self.data["baseline_expectations"] = value
+            self.save()
+            before = self.profile.read_bytes()
+            self.assertEqual(self.call("validate", str(self.profile))[0], 2)
+            self.assertEqual(self.profile.read_bytes(), before)
+        self.data["baseline_expectations"] = {"minimum_executed_tests": 1}
+        self.data["checks"] = ["build"]
+        self.save()
+        self.assertEqual(self.call("validate", str(self.profile))[0], 2)
+
     def test_init_preserves_existing_profile(self):
         before = self.profile.read_bytes()
         code, _, _ = self.call("init", "--app", str(self.app), "--name", "Other", "--project", "Other.xcodeproj",

@@ -173,6 +173,7 @@ def audit(app, profile, reference=None):
                      "project": relative(project)}
             target = targets.get((project.resolve(), identifier))
             entry["exists"] = target is not None
+            entry["resolved_name"] = target.get("name") if target else None
             if not target:
                 finding("orphaned_test_reference", "A " + origin + " test reference does not resolve to a native target.")
             elif target["product_type"] not in ("com.apple.product-type.bundle.unit-test", "com.apple.product-type.bundle.ui-testing"):
@@ -220,6 +221,11 @@ def audit(app, profile, reference=None):
         finding("build_only_profile", "Automated tests are not configured in this profile.", "warning")
     elif not any(t["enabled"] and t["exists"] for t in effective):
         finding("no_effective_test_targets", "No enabled, resolved test targets were found in the selected test action.")
+    expectations = profile.get("baseline_expectations", {})
+    for name in expectations.get("required_test_targets", []):
+        matches = [t for t in effective if t["resolved_name"] == name and t["enabled"] and t["exists"]]
+        if len(matches) != 1:
+            finding("required_test_target_missing_or_ambiguous", "A required test target is not uniquely enabled and resolved: " + name)
     head, dirty = git(app, "rev-parse", "HEAD"), git(app, "status", "--porcelain")
     upstream = git(app, "rev-parse", "--symbolic-full-name", "@{upstream}")
     tracking = {"ref": upstream, "commit": git(app, "rev-parse", "@{upstream}") if upstream else None,

@@ -3,9 +3,10 @@
 A reusable development workflow framework for Swift apps with Codex: onboard an app, plan a feature,
 implement a bounded change, and collect honest verification evidence.
 
-**v0.3.0 — Adoption and Evidence Preview.** Four installable skills and a dependency-free Python helper.
+**v0.4.0 — development preview candidate.** Four installable skills and a dependency-free Python helper.
 The latest published release is [v0.3.0](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.3.0).
-It includes baseline audit, evidence comparison/PR-summary drafts, and safe update staging.
+The published v0.3.0 includes baseline audit, evidence comparison/PR-summary drafts, and safe update staging.
+This development branch adds optional baseline expectations and test-count change reporting; v0.4.0 is not published.
 No account, service, API key, or global configuration change is required by SwiftKeystone itself.
 You use it within your existing Codex environment.
 
@@ -165,6 +166,16 @@ are included starting with v0.2.0; the original v0.1.0 assets remain unchanged.
 These commands are included in the published v0.3.0 helper. Use the verified download above;
 installation copies skills into the app, while these commands run from the extracted distribution.
 A static audit, staged update, or generated summary does not establish native behavior or grant merge approval.
+
+## Baseline expectations (v0.4.0 development)
+
+The development helper accepts optional required test targets and a minimum executed-test count;
+see the [profile contract](docs/profile.md#optional-baseline-expectations-v040-development).
+Existing profiles need no migration. These fields require the v0.4.0 helper, not the v0.3.0 download
+above. Build a candidate from this source with `python3 scripts/package_release.py` to evaluate it;
+keep that versioned extraction separate from published distributions. Count decreases and changed
+contracts require review in comparisons and PR summaries. Neither counts nor target names establish
+behavioral acceptance. No v0.4.0 release is implied by local packaging.
 
 ## Specialist skills
 

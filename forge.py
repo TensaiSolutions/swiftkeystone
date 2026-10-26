@@ -15,7 +15,8 @@ import tempfile
 
 from keystone_common import ForgeError, inventory, write_json, source_fingerprint, private_output
 
-VERSION = "0.3.0"
+VERSION = "0.4.0"
+PUBLISHED_VERSION = "0.3.0"
 ROOT = Path(__file__).resolve().parent
 SKILLS = ("ios-onboard", "ios-plan-feature", "ios-build-feature", "ios-verify")
 
@@ -24,7 +25,7 @@ def load_profile(path):
     """Validate the same closed structure described by schemas/app-profile.schema.json."""
     data = json.loads(path.read_text())
     required = {"schema_version", "name", "project", "scheme", "destination", "checks", "timeout_seconds"}
-    optional = {"deployment_target", "swift_version", "architecture", "specialist_skills"}
+    optional = {"deployment_target", "swift_version", "architecture", "specialist_skills", "baseline_expectations"}
     if not isinstance(data, dict) or set(data) - required - optional or required - set(data):
         raise ForgeError("Profile has missing or unknown fields; see docs/profile.md.")
     if type(data["schema_version"]) is not int or data["schema_version"] != 1:
@@ -45,6 +46,9 @@ def load_profile(path):
             raise ForgeError(f"{key} must be a nonempty string.")
     if "specialist_skills" in data and (not isinstance(data["specialist_skills"], list) or any(not isinstance(s, str) or not s.strip() for s in data["specialist_skills"])):
         raise ForgeError("specialist_skills must be an array of nonempty strings.")
+    if "baseline_expectations" in data:
+        from keystone_expectations import validate_expectations
+        validate_expectations(data["baseline_expectations"], checks)
     return data
 
 
@@ -170,6 +174,18 @@ def read_test_summary(bundle):
         return {"error": f"Could not read Xcode test summary: {error}"}
 
 
+def read_test_targets(bundle):
+    from keystone_expectations import target_counts
+    try:
+        result = subprocess.run(["xcrun", "xcresulttool", "get", "test-results", "tests", "--path", str(bundle), "--compact"],
+                                capture_output=True, text=True, timeout=30)
+        if result.returncode:
+            return {"error": "Could not read Xcode test targets."}
+        return {"executed_by_target": target_counts(json.loads(result.stdout))}
+    except (OSError, ValueError, RecursionError, subprocess.SubprocessError):
+        return {"error": "Could not interpret Xcode test target evidence."}
+
+
 def failure_diagnostic(log):
     try:
         with log.open("rb") as handle:
@@ -220,6 +236,8 @@ def verify(args):
                                "Accessibility beyond configured automated checks", "Release readiness"]}
     if "test" not in profile["checks"]:
         report["not_verified"].append("Automated tests (not configured)")
+    if "baseline_expectations" in profile:
+        report["baseline_expectations"] = profile["baseline_expectations"]
     evidence = run / "report.json"
     write_json(evidence, report)
     for name, argv in commands(profile, app, run):
@@ -258,6 +276,15 @@ def verify(args):
                     reason = "The Xcode result bundle does not report passing tests."
                 if reason:
                     entry.update(status="failed", failure_reason=reason)
+        if name == "test" and "baseline_expectations" in profile and entry.get("exit_code") is not None:
+            from keystone_expectations import assess
+            targets = read_test_targets(run / "Tests.xcresult") if profile["baseline_expectations"].get("required_test_targets") else {}
+            if targets:
+                entry["test_targets"] = targets
+            assessment = assess(profile["baseline_expectations"], entry.get("test_summary", {}), targets.get("executed_by_target"))
+            entry["baseline_assessment"] = assessment
+            if assessment["status"] != "passed" and entry["status"] == "passed":
+                entry.update(status="failed", failure_reason="Baseline expectations were not met: " + ", ".join(assessment["findings"]))
         if entry["status"] != "passed":
             failures = entry.get("test_summary", {}).get("testFailures", [])
             if not isinstance(failures, list):

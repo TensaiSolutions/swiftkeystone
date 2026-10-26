@@ -11,6 +11,11 @@ archive as well as the source. Recheck those instructions after publication; do 
 described as unpublished. Published archives are immutable: documentation corrections ship in a new
 release, with a correction linked from the affected release notes.
 
+The current source helper is the **v0.4.0 development candidate**. `forge.VERSION` selects the candidate
+archive/report version; `forge.PUBLISHED_VERSION` keeps the documented public adoption instructions
+on v0.3.0 until a new release is prepared. Review both explicitly during release preparation. New optional
+baseline fields require the v0.4.0 helper and must not be added to profiles still used by v0.3.0.
+
 The package scripts create local artifacts only. Preparing a release does not publish it or create a tag.
 
 1. Review the version in `forge.py`, README download paths, changelog, validation record, and preview limits.
