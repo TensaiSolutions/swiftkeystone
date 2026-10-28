@@ -298,3 +298,18 @@ The observed Xcode result-tree layouts are supported; unsupported layouts fail a
 rather than guessing execution. Raw reports, result bundles, target names and machine-specific inputs
 remain outside the distribution. Existing working app checkouts, installed skills and released assets were
 preserved. No v0.4.0 publication, minimum-runtime, other hardware, live-service or signing readiness is claimed.
+
+
+## v0.4.0 release package (2026-10-27)
+
+Release preparation aligns the helper/public adoption version, download paths, changelog and bundled
+references with v0.4.0. A clean extracted archive passed iOS and Mac fixture installation previews,
+first/repeated installation, profile creation/validation, existing-profile refusal and no-write verification
+previews. Staging an upgrade from the verified v0.3.0 distribution left the fixture's installed skills
+unchanged and produced no conflicts. These fixture checks are portable adoption checks, not native builds.
+
+All 63 portable tests and distribution checks pass. Verification function bodies and core helper modules
+match the candidate used for the native baseline-expectation checks above; all six native reports remain
+readable by the release helper. Publication preparation did not repeat Xcode/device checks or expand their
+coverage. Operational evidence remains private; previous release archives and checksums are preserved.
+Publication requires the reviewed merged commit, a fresh rebuild, and verification of downloaded assets.

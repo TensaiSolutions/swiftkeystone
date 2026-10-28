@@ -38,7 +38,7 @@ summary can successfully describe a failed run: its exit 0 means text generation
 Invalid/inconsistent input exits 2. Output files are exclusive/private and never replace existing files.
 
 
-The v0.4.0 development helper reports signed changes in total, executed, passed, failed and skipped
+The v0.4.0 helper reports signed changes in total, executed, passed, failed and skipped
 counts. Executed means passed plus failed; skipped cases do not compensate for decreased execution.
 A decrease sets comparison status to `needs_review` (exit 1), even when both native runs passed.
 Increases are visible but do not prove improved coverage. Missing readable counts produce an unknown

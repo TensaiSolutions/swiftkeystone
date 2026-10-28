@@ -1,12 +1,10 @@
 # Changelog
 
-## 0.4.0 — unreleased
+## 0.4.0 — baseline expectations preview (2026-10-27)
 
 - Add optional baseline target/execution expectations, static missing-target findings, native execution gates, and count-change summaries.
-
 - Clarify separate package dependency pins, animated native UI queries, and inspected window-scoped screenshots from the macOS feature pilot.
-
-- Correct published-release adoption instructions to use v0.3.0, and check download/helper version consistency during packaging.
+- Correct published-release adoption instructions and include verified v0.4.0 download paths, and check download/helper version consistency during packaging.
 - Reject Python versions below 3.10 before command dispatch; explain interpreter selection, normal sandbox approvals, and local-scheme versus CI coverage.
 - Record fresh-session adoption against an existing app, including an honestly failed native UI baseline.
 

@@ -3,10 +3,10 @@
 A reusable development workflow framework for Swift apps with Codex: onboard an app, plan a feature,
 implement a bounded change, and collect honest verification evidence.
 
-**v0.4.0 — development preview candidate.** Four installable skills and a dependency-free Python helper.
-The latest published release is [v0.3.0](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.3.0).
-The published v0.3.0 includes baseline audit, evidence comparison/PR-summary drafts, and safe update staging.
-This development branch adds optional baseline expectations and test-count change reporting; v0.4.0 is not published.
+**v0.4.0 — Baseline Expectations Preview.** Four installable skills and a dependency-free Python helper.
+The latest published release is [v0.4.0](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.4.0).
+It adds optional baseline expectations and test-count change reporting to the existing audit,
+evidence comparison, PR-summary and safe update-staging workflows.
 No account, service, API key, or global configuration change is required by SwiftKeystone itself.
 You use it within your existing Codex environment.
 
@@ -20,29 +20,29 @@ The project was previously called iOS Forge. For compatibility, the framework ke
 Updated skill bundles still require manual review when they differ from an installed copy;
 the installer will not overwrite them.
 
-The published archive is `swiftkeystone-0.3.0.zip`, containing a `swiftkeystone-0.3.0/` directory.
+The published archive is `swiftkeystone-0.4.0.zip`, containing a `swiftkeystone-0.4.0/` directory.
 
 ## Start here
 
-Download `swiftkeystone-0.3.0.zip` and `swiftkeystone-0.3.0.zip.sha256` from the
-[v0.3.0 release](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.3.0).
+Download `swiftkeystone-0.4.0.zip` and `swiftkeystone-0.4.0.zip.sha256` from the
+[v0.4.0 release](https://github.com/TensaiSolutions/swiftkeystone/releases/tag/v0.4.0).
 Use those named assets, rather than GitHub's automatically generated source archives, for these steps.
 In the download directory on macOS, verify and extract:
 
 ```sh
-shasum -a 256 -c swiftkeystone-0.3.0.zip.sha256
-unzip swiftkeystone-0.3.0.zip
-cd swiftkeystone-0.3.0
+shasum -a 256 -c swiftkeystone-0.4.0.zip.sha256
+unzip swiftkeystone-0.4.0.zip
+cd swiftkeystone-0.4.0
 ```
 
 Stop if the checksum does not match. Keep the extracted directory in a stable location.
-Cloning this repository is an alternative; it gives you the current branch rather than necessarily v0.3.0.
+Cloning this repository is an alternative; it gives you the current branch rather than necessarily v0.4.0.
 Commands below run from that SwiftKeystone directory. Python 3.10+ is required.
 Check `python3 --version` before setup. macOS `/usr/bin/python3` may be older; select an
 already installed Python 3.10+ interpreter and use that same executable for every command below.
 If none is installed, stop and arrange installation explicitly. SwiftKeystone does not install Python
 or change your system interpreter. The original v0.3.0 helper does not enforce this minimum at startup;
-the development helper now rejects older interpreters before dispatching commands.
+v0.4.0 rejects older interpreters before dispatching commands.
 App builds need macOS and full Xcode. iOS simulator runs also need a compatible installed runtime.
 Xcode 16 or newer is required to read test-result summaries.
 
@@ -61,7 +61,7 @@ Do not install skills into repositories you do not trust without reading them.
 
 Open your app in Codex and ask:
 
-> Use $ios-onboard to discover this app's configuration and establish a verification baseline. The SwiftKeystone helper is at /absolute/path/to/swiftkeystone-0.3.0/forge.py.
+> Use $ios-onboard to discover this app's configuration and establish a verification baseline. The SwiftKeystone helper is at /absolute/path/to/swiftkeystone-0.4.0/forge.py.
 
 Replace that helper path with the location you extracted. Installation copies skills, not the Python
 helper, into the app. If a skill is not discovered, reopen the app's Codex chat and confirm its
@@ -163,19 +163,18 @@ are included starting with v0.2.0; the original v0.1.0 assets remain unchanged.
 - [`compare` and `summary`](docs/evidence-comparison.md) compare completed reports, qualify restoration checks, and draft bounded PR evidence text without private diagnostics.
 - [`update`](docs/skill-updates.md) stages a three-way skill candidate, backup, and conflict inventory; it never replaces installed skills or profiles.
 
-These commands are included in the published v0.3.0 helper. Use the verified download above;
+These commands are included in v0.4.0 and were introduced in v0.3.0. Use the verified download above;
 installation copies skills into the app, while these commands run from the extracted distribution.
 A static audit, staged update, or generated summary does not establish native behavior or grant merge approval.
 
-## Baseline expectations (v0.4.0 development)
+## Baseline expectations (v0.4.0)
 
-The development helper accepts optional required test targets and a minimum executed-test count;
-see the [profile contract](docs/profile.md#optional-baseline-expectations-v040-development).
-Existing profiles need no migration. These fields require the v0.4.0 helper, not the v0.3.0 download
-above. Build a candidate from this source with `python3 scripts/package_release.py` to evaluate it;
-keep that versioned extraction separate from published distributions. Count decreases and changed
-contracts require review in comparisons and PR summaries. Neither counts nor target names establish
-behavioral acceptance. No v0.4.0 release is implied by local packaging.
+The helper accepts optional required test targets and a minimum executed-test count;
+see the [profile contract and adoption checklist](docs/profile.md#optional-baseline-expectations-v040).
+Existing profiles need no migration. These fields require the v0.4.0 helper; older helpers reject them.
+Use the verified v0.4.0 download above and keep previous distributions available during an upgrade.
+Count decreases and changed contracts require review in comparisons and PR summaries. Neither counts
+nor target names establish behavioral acceptance. Skill activation remains explicit and preserves originals.
 
 ## Specialist skills
 

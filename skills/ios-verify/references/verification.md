@@ -45,7 +45,7 @@ and `report.json` lists automated tests under `not_verified`. A passing status r
 only the selected checks passed. Existing v0.1.0 reports do not have this additional build-only reminder.
 
 
-Starting with the v0.4.0 development helper, optional profile baseline expectations are enforced after
+Starting with the v0.4.0 helper, optional profile baseline expectations are enforced after
 native test execution. A passing command with too few executed cases or an unexecuted required target
 is recorded as a failed test check with its native exit code retained. Required-target checks additionally
 read Xcode's `test-results tests` tree; errors or unsupported/inconsistent counts cannot establish the
