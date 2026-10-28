@@ -37,7 +37,7 @@ If no test target or test action exists, record that gap before verification. Af
 check to get a green result. `init` does not inspect test availability and keeps its build/test default.
 
 
-## Optional baseline expectations (v0.4.0 development)
+## Optional baseline expectations (v0.4.0)
 
 Existing schema-version-1 profiles remain valid without changes. The v0.4.0 helper additionally accepts:
 

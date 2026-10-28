@@ -16,7 +16,7 @@ import tempfile
 from keystone_common import ForgeError, inventory, write_json, source_fingerprint, private_output
 
 VERSION = "0.4.0"
-PUBLISHED_VERSION = "0.3.0"
+PUBLISHED_VERSION = "0.4.0"
 ROOT = Path(__file__).resolve().parent
 SKILLS = ("ios-onboard", "ios-plan-feature", "ios-build-feature", "ios-verify")
 

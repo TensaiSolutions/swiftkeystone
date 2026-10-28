@@ -33,7 +33,7 @@ unit suite does not establish UI coverage merely because a UI target appears in 
 Output files are private, must be outside both the app and helper distribution, and are never replaced.
 
 
-With v0.4.0 development profiles, `baseline_expectations.required_test_targets` requires a unique,
+With v0.4.0 profiles, `baseline_expectations.required_test_targets` requires a unique,
 enabled native target by its resolved project name in the effective test selection. Missing/disabled
 requirements are errors even if another suite is enabled. Static wiring cannot prove execution or the
 minimum count; those expectations are separately enforced against Xcode evidence by `verify`.
