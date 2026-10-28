@@ -53,6 +53,18 @@ def read_report(path):
                 raise ForgeError("Passing tests require readable evidence of executed passing cases.")
     if (data["status"] == "passed") != all(c["status"] == "passed" for c in checks):
         raise ForgeError("Report outcome contradicts its checks.")
+    if "baseline_expectations" in data:
+        from keystone_expectations import validate_expectations, assess
+        validate_expectations(data["baseline_expectations"], list(found))
+        for check in checks:
+            if check["name"] != "test" or check["status"] == "not_run":
+                continue
+            targets = check.get("test_targets", {}).get("executed_by_target") if isinstance(check.get("test_targets", {}), dict) else None
+            if targets is not None and (not isinstance(targets, dict) or any(not isinstance(k, str) or not k.strip() or type(v) is not int or v < 0 for k, v in targets.items())):
+                raise ForgeError("Invalid recorded test-target counts.")
+            assessment = assess(data["baseline_expectations"], check.get("test_summary", {}), targets)
+            if check["status"] == "passed" and (assessment["status"] != "passed" or check.get("baseline_assessment") != assessment):
+                raise ForgeError("Passing evidence contradicts its baseline expectations.")
     return data, hashlib.sha256(raw).hexdigest()
 
 
@@ -109,7 +121,7 @@ def comparable(left, right):
     tool_a, tool_b = left.get("toolchain"), right.get("toolchain")
     xcode_a = tool_a.get("xcode") if isinstance(tool_a, dict) else None
     xcode_b = tool_b.get("xcode") if isinstance(tool_b, dict) else None
-    return bool(a and b and a == b and isinstance(xcode_a, str) and xcode_a and xcode_a == xcode_b), legacy
+    return bool(left.get("baseline_expectations", {}) == right.get("baseline_expectations", {}) and a and b and a == b and isinstance(xcode_a, str) and xcode_a and xcode_a == xcode_b), legacy
 
 
 def compare(before_path, after_path, restored_path=None):
@@ -127,6 +139,14 @@ def compare(before_path, after_path, restored_path=None):
               "input_report_sha256": {"before": before_hash, "after": after_hash},
               "restoration_verified": None, "regression_cycle_supported": None,
               "note": "Report comparison is not independent execution or a causal proof. Counts and hashes do not establish user-journey coverage."}
+    left_counts, right_counts = tests(before), tests(after)
+    result["baseline_expectations_changed"] = before.get("baseline_expectations", {}) != after.get("baseline_expectations", {})
+    result["test_count_delta"] = None
+    result["executed_test_count_decreased"] = None
+    if left_counts is not None and right_counts is not None:
+        result["test_count_delta"] = {key: right_counts[key] - left_counts[key] for key in left_counts}
+        result["test_count_delta"]["executedTests"] = (right_counts["passedTests"] + right_counts["failedTests"] - left_counts["passedTests"] - left_counts["failedTests"])
+        result["executed_test_count_decreased"] = result["test_count_delta"]["executedTests"] < 0
     if restored_path:
         restored, restored_hash = read_report(restored_path)
         restored_compatible, restored_legacy = comparable(before, restored)
@@ -142,6 +162,8 @@ def compare(before_path, after_path, restored_path=None):
             and result["restoration_verified"] and tests(restored) and tests(restored)["passedTests"])
         result["legacy_context_inferred"] |= restored_legacy
     result["status"] = "comparable" if compatible and a and b and all(profiles) else "needs_review"
+    if result["executed_test_count_decreased"]:
+        result["status"] = "needs_review"
     if restored_path and not result["restoration_verified"]:
         result["status"] = "needs_review"
     return result
@@ -161,6 +183,15 @@ def summarize(report_path, baseline=None, regression=None):
         lines += ["", "No readable automated-test counts are available in this report."]
     if "test" not in {c["name"] for c in report["checks"]}:
         lines += ["", "Build-only evidence: automated tests were not configured."]
+    if "baseline_expectations" in report:
+        from keystone_expectations import assess
+        check = next(c for c in report["checks"] if c["name"] == "test")
+        target_evidence = check.get("test_targets", {})
+        assessment = assess(report["baseline_expectations"], check.get("test_summary", {}), target_evidence.get("executed_by_target") if isinstance(target_evidence, dict) else None)
+        lines += ["", "Baseline expectations: " + (assessment["status"] if check["status"] != "not_run" else "not evaluated") + "."]
+        if assessment["minimum_executed_tests"] is not None:
+            lines.append(f"Minimum executed tests: {assessment['minimum_executed_tests']}.")
+        lines.append(f"Required target count: {len(report['baseline_expectations'].get('required_test_targets', []))}; missing execution evidence: {len(assessment['missing_test_targets'])}.")
     version = report.get("forge_version")
     if isinstance(version, str) and re.fullmatch(r"[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}", version):
         lines += ["", "Recorded SwiftKeystone version: `" + version + "`."]
@@ -171,6 +202,17 @@ def summarize(report_path, baseline=None, regression=None):
     comparison = compare(baseline, regression, report_path) if regression else compare(baseline, report_path) if baseline else None
     if comparison:
         lines += ["", "Evidence comparison: " + comparison["status"] + "."]
+        if not comparison["comparable_configuration"]:
+            lines.append("Run context or baseline expectations differ or are unavailable; count changes need contextual review.")
+        delta = comparison["test_count_delta"]
+        if delta is not None:
+            lines.append(f"Test-count changes: executed {delta['executedTests']:+d}, total {delta['totalTestCount']:+d}, passed {delta['passedTests']:+d}, failed {delta['failedTests']:+d}, skipped {delta['skippedTests']:+d}.")
+            if comparison["executed_test_count_decreased"]:
+                lines.append("Executed test count decreased; review coverage before accepting this baseline.")
+        else:
+            lines.append("Test-count change is unavailable because readable counts are missing.")
+        if comparison["baseline_expectations_changed"]:
+            lines.append("Baseline expectations changed; the runs require review.")
         if comparison["check_selection_changed"]:
             lines.append("Configured check selection changed between the compared runs.")
         if regression:

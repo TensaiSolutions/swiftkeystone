@@ -267,3 +267,34 @@ recorded and excluded from the feature PR. No global policy changes, plugin-vali
 submission, non-English layout certification, other hardware/macOS validation, manual accessibility,
 release signing or notarization are claimed. SwiftKeystone's installed v0.3.0 skills and published assets
 were preserved; updated guidance is development work for a future release.
+
+
+## v0.4.0 candidate: optional baseline expectations (2026-10-26)
+
+The development helper adds an opt-in schema-version-1 contract for required test targets and a minimum
+executed count. Existing profiles remain valid without migration. Portable tests cover profile refusal,
+skipped-case exclusion, target-tree interpretation and inconsistent evidence, successful native-command
+simulation rejected by the contract, preserved native failure diagnostics, report consistency/privacy,
+count decreases, expectation/context changes, and extracted-package contract validation. All **63 portable
+tests** and distribution checks pass; these are separate from the native results below.
+
+Isolated copies of the existing iOS and macOS pilots used an extracted v0.4.0 candidate. The iOS profile
+required both unit and UI targets and 23 executed cases. Its positive baseline passed **23 tests**.
+Temporarily omitting the UI target from the default plan produced **17 passing cases**, native exit 0,
+but verification exit 1 for the missing target and unmet minimum. Audit also rejected the missing suite.
+Restoring exact plan bytes returned all 23 cases to passing with matching source/profile hashes.
+
+The Mac profile required its UI target and four executed cases. Its UI baseline passed **4 tests**.
+Temporarily selecting the app-only scheme produced **111 passing app cases**, native exit 0, but
+verification exit 1 because the required UI target had not executed. Audit rejected this configuration
+as well. Restoring the UI profile returned all four UI cases to passing with matching source/profile
+hashes. The earlier local ad-hoc signing/test-entitlement setup remained scoped to the isolated clone.
+
+Comparisons flagged the iOS six-case decrease and the Mac scheme/context change for review. The Mac's
+larger count did not satisfy the missing-suite contract. Final summary presentation and report validation
+were exercised against the recorded native evidence; code counts do not certify behavioral coverage.
+These were expectation/exclusion checks, not deliberately failing app assertions or independent adoption.
+The observed Xcode result-tree layouts are supported; unsupported layouts fail a declared target contract
+rather than guessing execution. Raw reports, result bundles, target names and machine-specific inputs
+remain outside the distribution. Existing working app checkouts, installed skills and released assets were
+preserved. No v0.4.0 publication, minimum-runtime, other hardware, live-service or signing readiness is claimed.

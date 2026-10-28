@@ -35,6 +35,12 @@ class AuditTests(unittest.TestCase):
     def run_audit(self):
         return audit(self.app, self.profile)
 
+    def test_declared_target_must_be_enabled_in_selected_configuration(self):
+        self.profile["baseline_expectations"] = {"required_test_targets": ["Example Tests"]}
+        self.assertEqual(self.run_audit()["status"], "inspected")
+        self.scheme.write_text(self.scheme.read_text().replace('skipped="NO"', 'skipped="YES"'))
+        self.assertIn("required_test_target_missing_or_ambiguous", {f["code"] for f in self.run_audit()["findings"]})
+
     def test_resolved_target_is_reported_without_running_xcode(self):
         with patch('subprocess.run', side_effect=AssertionError('No native commands allowed')):
             result = self.run_audit()

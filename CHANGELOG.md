@@ -1,6 +1,8 @@
 # Changelog
 
-## Unreleased
+## 0.4.0 — unreleased
+
+- Add optional baseline target/execution expectations, static missing-target findings, native execution gates, and count-change summaries.
 
 - Clarify separate package dependency pins, animated native UI queries, and inspected window-scoped screenshots from the macOS feature pilot.
 

@@ -27,7 +27,7 @@ def readme_errors(text, version):
 
 
 def main():
-    errors = readme_errors((ROOT / "README.md").read_text(), forge.VERSION)
+    errors = readme_errors((ROOT / "README.md").read_text(), forge.PUBLISHED_VERSION)
     for name in forge.SKILLS:
         directory = ROOT / "skills" / name
         text = (directory / "SKILL.md").read_text()
